@@ -14,7 +14,11 @@ index 7748e9ac04fbd3f5259d92fc908d90889cba86c8..80b5d151e0dd6fa44794187875b4b805
          ++this.tickCount;
 +        // Luminol start - Add a config to enable tick command
 +        if (fun.bm.lophine.config.modules.experiment.CommandConfig.tick) {
-+            MinecraftServer.tickRateManager.tick();
++            try {
++                MinecraftServer.tickRateManager.tick();
++            } catch (final Throwable t) {
++                MinecraftServer.LOGGER.error("Exception in tickRateManager.tick()", t); // Lophine - catch to prevent scheduler death
++            }
 +        }
 +        // Luminol end - Add a config to enable tick command
          // expire invalid click command callbacks
@@ -26,8 +30,12 @@ index 7748e9ac04fbd3f5259d92fc908d90889cba86c8..80b5d151e0dd6fa44794187875b4b805
  
 +        // Luminol start - Add a config to enable tick command
 +        if (fun.bm.lophine.config.modules.experiment.CommandConfig.tick) {
-+            MinecraftServer.tickRateManager.reduceSprintTicks();
-+            MinecraftServer.tickRateManager.endTickWork();
++            try {
++                MinecraftServer.tickRateManager.reduceSprintTicks();
++                MinecraftServer.tickRateManager.endTickWork();
++            } catch (final Throwable t) {
++                MinecraftServer.LOGGER.error("Exception in tickRateManager reduceSprintTicks/endTickWork", t); // Lophine - catch to prevent scheduler death
++            }
 +        }
 +        // Luminol end - Add a config to enable tick command
 +
@@ -53,8 +61,8 @@ index 0f4e8ee9438135e24e0f61a1390c59573b9e9c3f..65699d2ad66c686a8b7d1b951787ddd7
  
 -    public static final int TICK_RATE = 20;
 -    public static final long TIME_BETWEEN_TICKS = 1_000_000_000L / TICK_RATE; // ns
-+    public static float TICK_RATE = 20; // Luminol - Add tick command support
-+    public static long TIME_BETWEEN_TICKS = (long) (1_000_000_000L / TICK_RATE); // ns // Luminol - Add tick command support
++    public static volatile float TICK_RATE = 20; // Luminol - Add tick command support // Lophine - volatile for cross-region visibility
++    public static volatile long TIME_BETWEEN_TICKS = (long) (1_000_000_000L / TICK_RATE); // ns // Luminol - Add tick command support // Lophine - volatile for cross-region visibility
      // Folia start - watchdog
      public static final FoliaWatchdogThread WATCHDOG_THREAD = new FoliaWatchdogThread();
      static {
@@ -68,12 +76,20 @@ index 0f4e8ee9438135e24e0f61a1390c59573b9e9c3f..65699d2ad66c686a8b7d1b951787ddd7
 +            final long tickCount;
 +            if (fun.bm.lophine.config.modules.experiment.CommandConfig.tick) {
 +                if (MinecraftServer.tickRateManager.isSprinting() && MinecraftServer.tickRateManager.checkShouldSprintThisTick()) {
++                    // Lophine start - atomic tick rate update: update TIME_BETWEEN_TICKS first then TICK_RATE
++                    // to avoid a reader seeing new TICK_RATE but old TIME_BETWEEN_TICKS
++                    final long newInterval = (long) (1_000_000_000L / net.minecraft.server.commands.TickCommand.MAX_TICKRATE);
++                    TIME_BETWEEN_TICKS = newInterval;
 +                    TICK_RATE = net.minecraft.server.commands.TickCommand.MAX_TICKRATE;
-+                    TIME_BETWEEN_TICKS = (long) (1_000_000_000L / TICK_RATE);
++                    // Lophine end - atomic tick rate update
 +                    tickCount = 1;
 +                } else {
-+                    TICK_RATE = MinecraftServer.tickRateManager.tickrate();
-+                    TIME_BETWEEN_TICKS = (long) (1_000_000_000L / TICK_RATE);
++                    // Lophine start - atomic tick rate update
++                    final float newRate = MinecraftServer.tickRateManager.tickrate();
++                    final long newInterval = (long) (1_000_000_000L / newRate);
++                    TIME_BETWEEN_TICKS = newInterval;
++                    TICK_RATE = newRate;
++                    // Lophine end - atomic tick rate update
 +                    tickCount = Math.max(1L, this.tickSchedule.getPeriodsAhead(TIME_BETWEEN_TICKS, tickStart));
 +                }
 +            } else {
@@ -90,7 +106,11 @@ index 0f4e8ee9438135e24e0f61a1390c59573b9e9c3f..65699d2ad66c686a8b7d1b951787ddd7
                  this.tickRegion(tickCount, tickStart, scheduledEnd);
 +                // Luminol start - Add a config to enable tick command
 +                if (fun.bm.lophine.config.modules.experiment.CommandConfig.tick) {
-+                    MinecraftServer.tickRateManager.endTickWork();
++                    try {
++                        MinecraftServer.tickRateManager.endTickWork();
++                    } catch (final Throwable t) {
++                        // Lophine - swallow to avoid killing the region scheduler thread
++                    }
 +                }
 +                // Luminol end - Add a config to enable tick command
              } catch (final Throwable thr) {
@@ -144,9 +164,25 @@ index 4257c47d33e3773fac766817138cc21c55d9ab76..95f6b1cbd5e33151c326689bc72292ff
      }
  
 +    // Luminol start - Add tick command support
-+    public void reduceSprintTicks() {
-+        this.remainingSprintTicks--;
++    // Lophine start - use AtomicLong for thread safety across region threads
++    private final java.util.concurrent.atomic.AtomicLong _remainingSprintTicks = new java.util.concurrent.atomic.AtomicLong(0L);
++
++    // Delegate: keep the parent field in sync for reads that access it directly
++    private void syncRemainingSprintTicks() {
++        long val = this._remainingSprintTicks.get();
++        this.remainingSprintTicks = val;
 +    }
++
++    public void reduceSprintTicks() {
++        this._remainingSprintTicks.decrementAndGet();
++        this.syncRemainingSprintTicks();
++    }
++
++    public void setSprintTicks(long ticks) {
++        this._remainingSprintTicks.set(ticks);
++        this.syncRemainingSprintTicks();
++    }
++    // Lophine end - use AtomicLong for thread safety
 +    // Luminol end - Add tick command support
 +
      public void endTickWork() {

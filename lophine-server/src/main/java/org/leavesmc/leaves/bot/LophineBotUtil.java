@@ -7,6 +7,11 @@ import net.minecraft.world.entity.LivingEntity;
 import org.slf4j.Logger;
 import org.bukkit.Location;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Lophine - Folia safety utilities for fake players (ServerBot).
  * <p>
@@ -28,6 +33,14 @@ import org.bukkit.Location;
 public final class LophineBotUtil {
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    // Lophine - per-entity reschedule counter to prevent scheduler avalanche.
+    // If the same entity is rescheduled more than MAX_RESCHEDULE_ATTEMPTS times
+    // within RESCHEDULE_WINDOW_NANOS, we drop the work and log an error instead
+    // of flooding the scheduler queue.
+    private static final int MAX_RESCHEDULE_ATTEMPTS = 64;
+    private static final long RESCHEDULE_WINDOW_NANOS = TimeUnit.SECONDS.toNanos(10);
+    private static final Map<String, RescheduleTracker> rescheduleTrackers = new ConcurrentHashMap<>();
+
     private LophineBotUtil() {
     }
 
@@ -37,6 +50,10 @@ public final class LophineBotUtil {
      * the owning region via the Bukkit entity scheduler (Folia-safe) and
      * {@code false} is returned. Returning {@code true} means the caller
      * may proceed with the work on the current thread.
+     * <p>
+     * Lophine enhancement: if the same entity has been rescheduled more than
+     * {@link #MAX_RESCHEDULE_ATTEMPTS} times in the last 10 seconds, the
+     * work is dropped to prevent scheduler queue avalanche.
      */
     public static boolean ensureTickThread(LivingEntity entity, Runnable work) {
         if (entity == null || work == null) {
@@ -46,8 +63,22 @@ public final class LophineBotUtil {
             return false;
         }
         if (TickThread.isTickThreadFor(entity.level(), entity.getX(), entity.getZ())) {
+            // On correct thread - clear the reschedule tracker for this entity
+            rescheduleTrackers.remove(entity.getUUID().toString());
             return true;
         }
+
+        // Lophine - check reschedule rate limit before submitting to scheduler
+        String entityId = entity.getUUID().toString();
+        RescheduleTracker tracker = rescheduleTrackers.computeIfAbsent(entityId, k -> new RescheduleTracker());
+        if (!tracker.tryAcquire()) {
+            LOGGER.error("[ensureTickThread] Dropping work for bot {} - reschedule rate limit exceeded ({} attempts in {}s). " +
+                    "This usually means a code path is repeatedly calling bot operations from the wrong thread.",
+                    entity.getName().getString(), MAX_RESCHEDULE_ATTEMPTS,
+                    TimeUnit.NANOSECONDS.toSeconds(RESCHEDULE_WINDOW_NANOS));
+            return false;
+        }
+
         // Misrouted: reschedule on the correct region via the Folia entity scheduler
         try {
             entity.getBukkitEntity().taskScheduler().run(
@@ -107,6 +138,53 @@ public final class LophineBotUtil {
         }
     }
 
-    private static final java.util.Map<String, Long> lastWarnAt = new java.util.concurrent.ConcurrentHashMap<>();
-    private static final long WARN_THROTTLE_NANOS = java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
+    /**
+     * Lophine - check if the current thread is the owning tick thread for an entity,
+     * without rescheduling. Useful for guard checks where the caller handles
+     * rescheduling themselves.
+     */
+    public static boolean isOnTickThread(LivingEntity entity) {
+        if (entity == null || entity.level() == null) {
+            return false;
+        }
+        return TickThread.isTickThreadFor(entity.level(), entity.getX(), entity.getZ());
+    }
+
+    /**
+     * Lophine - check if the current thread is the owning tick thread for a location.
+     */
+    public static boolean isOnTickThread(ServerLevel world, Location location) {
+        if (world == null || location == null) {
+            return false;
+        }
+        return TickThread.isTickThreadFor(world, location.getBlockX() >> 4, location.getBlockZ() >> 4);
+    }
+
+    private static final Map<String, Long> lastWarnAt = new ConcurrentHashMap<>();
+    private static final long WARN_THROTTLE_NANOS = TimeUnit.SECONDS.toNanos(5);
+
+    /**
+     * Lophine - Rate-limit tracker for reschedule attempts per entity.
+     * Uses a sliding window approach: if the count exceeds MAX_RESCHEDULE_ATTEMPTS
+     * within RESCHEDULE_WINDOW_NANOS, further reschedules are dropped.
+     */
+    private static final class RescheduleTracker {
+        private final AtomicInteger count = new AtomicInteger(0);
+        private volatile long windowStartNanos = System.nanoTime();
+
+        boolean tryAcquire() {
+            long now = System.nanoTime();
+            // Reset window if expired
+            if (now - windowStartNanos > RESCHEDULE_WINDOW_NANOS) {
+                synchronized (this) {
+                    if (now - windowStartNanos > RESCHEDULE_WINDOW_NANOS) {
+                        windowStartNanos = now;
+                        count.set(0);
+                    }
+                }
+            }
+            int current = count.incrementAndGet();
+            return current <= MAX_RESCHEDULE_ATTEMPTS;
+        }
+    }
 }

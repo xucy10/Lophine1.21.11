@@ -1,4 +1,4 @@
-﻿package fun.bm.lophine.utils;
+package fun.bm.lophine.utils;
 
 import net.minecraft.server.MinecraftServer;
 

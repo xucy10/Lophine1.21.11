@@ -1,4 +1,4 @@
-﻿package fun.bm.lophine.config.modules.function;
+package fun.bm.lophine.config.modules.function;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fun.bm.lophine.command.counter.CounterCommand;

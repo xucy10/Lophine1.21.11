@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: lophine_server
+title: Lophine 服务端核心与扩展功能
+scope:
+    - lophine-server/
+source_files: []
+depends_on: []
+related_to:
+    - path: lophine_api
+    - path: luminol_api

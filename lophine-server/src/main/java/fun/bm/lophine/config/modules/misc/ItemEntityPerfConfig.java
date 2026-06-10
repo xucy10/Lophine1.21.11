@@ -1,4 +1,4 @@
-﻿package fun.bm.lophine.config.modules.misc;
+package fun.bm.lophine.config.modules.misc;
 
 import me.earthme.luminol.config.IConfigModule;
 import me.earthme.luminol.config.flags.ConfigClassInfo;
@@ -38,4 +38,34 @@ public class ItemEntityPerfConfig implements IConfigModule {
             This is a major quality-of-life win for technical servers but
             may feel cheaty on survival, so it is disabled by default.""")
     public static boolean unrestrictedPickup = false;
+
+    @ConfigInfo(name = "max-merge-attempts-per-tick", comments = """
+            Maximum number of item merge attempts per item entity per tick.
+            Vanilla has no limit which can cause severe lag with many items
+            in a small area (e.g. super smelters, bulk item elevators).
+            Set to 0 for unlimited (vanilla). Recommended: 8-16 for busy
+            technical servers.""")
+    public static int maxMergeAttemptsPerTick = 0;
+
+    @ConfigInfo(name = "tps-aware-merge-throttle", comments = """
+            If true, item merge operations are throttled when the server TPS
+            drops below 'tps-aware-merge-threshold'. This prevents item
+            processing from consuming excessive tick time during lag spikes,
+            which is critical for stability on busy technical servers.""")
+    public static boolean tpsAwareMergeThrottle = false;
+
+    @ConfigInfo(name = "tps-aware-merge-threshold", comments = """
+            TPS threshold below which item merge operations start being
+            throttled. Only relevant when 'tps-aware-merge-throttle' is true.
+            Default 16.0 means throttling begins when TPS drops below 80%.""")
+    public static double tpsAwareMergeThreshold = 16.0;
+
+    @ConfigInfo(name = "hopper-transfer-boost", comments = """
+            Multiplier applied to the hopper transfer cooldown. Values < 1.0
+            make hoppers faster (0.5 = twice as fast), values > 1.0 make
+            them slower. This is useful for technical servers where hopper
+            throughput is critical (e.g. super smelters, storage systems).
+            WARNING: Values below 0.5 may cause unexpected behavior.
+            1.0 = vanilla speed.""")
+    public static double hopperTransferBoost = 1.0;
 }

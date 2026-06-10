@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: luminol_api
+title: Luminol API 扩展接口与事件定义
+scope:
+    - luminol-api/
+source_files: []
+depends_on: []
+related_to:
+    - path: lophine_server

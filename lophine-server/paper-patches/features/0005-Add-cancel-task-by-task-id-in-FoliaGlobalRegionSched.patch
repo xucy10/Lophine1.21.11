@@ -12,8 +12,7 @@ index 14ffbcb66006878eacf310547dad53718f8308eb..6c108bc7d93196803daeef4751d06caf
      private long tickCount = 0L;
      private final Object stateLock = new Object();
      private final Long2ObjectOpenHashMap<List<GlobalScheduledTask>> tasksByDeadline = new Long2ObjectOpenHashMap<>();
-+    private int lastTaskId = 1; // Lophine - add task id
-+    private final Object stateLockForTaskId = new Object(); // Lophine - add task id
++    private final java.util.concurrent.atomic.AtomicInteger lastTaskId = new java.util.concurrent.atomic.AtomicInteger(1); // Lophine - add task id // Lophine - use AtomicInteger for lock-free ID generation
  
      public void tick() {
          final List<GlobalScheduledTask> run;
@@ -55,14 +54,13 @@ index 14ffbcb66006878eacf310547dad53718f8308eb..6c108bc7d93196803daeef4751d06caf
 +    }
 +
 +    private int getNextTaskId() {
-+        synchronized (this.stateLockForTaskId) {
-+            if (this.lastTaskId == Integer.MAX_VALUE) {
-+                this.lastTaskId = 1;
-+            } else {
-+                ++this.lastTaskId;
-+            }
++        int id = this.lastTaskId.incrementAndGet();
++        if (id == Integer.MAX_VALUE) {
++            // Wrap around safely
++            this.lastTaskId.set(1);
++            id = this.lastTaskId.incrementAndGet();
 +        }
-+        return this.lastTaskId;
++        return id;
 +    }
 +    // Lophine end - add cancel task by task id
 +

@@ -87,13 +87,13 @@ public class EntitiesCounterUtil {
     }
 
     public static void addDataToLoaded(ServerLevel level, ReferenceList<Entity> data, int uniqueId) {
-        Cache<Integer, ReferenceList<Entity>> data0 = globalLoadedEntities.computeIfAbsent(level, _ -> CacheBuilder.newBuilder().concurrencyLevel(16).weakValues().build());
+        Cache<Integer, ReferenceList<Entity>> data0 = globalLoadedEntities.computeIfAbsent(level, k -> CacheBuilder.newBuilder().concurrencyLevel(16).weakValues().build());
         if (data0.asMap().containsKey(uniqueId)) return;
         data0.put(uniqueId, data);
     }
 
     public static void reportAreaMap(ServerLevel level, PositionCountingAreaMap<ServerPlayer> areaMap, int uniqueId) {
-        Cache<Integer, PositionCountingAreaMap<ServerPlayer>> areaMap0 = mobsAreaMap.computeIfAbsent(level, _ -> CacheBuilder.newBuilder().concurrencyLevel(16).weakValues().build());
+        Cache<Integer, PositionCountingAreaMap<ServerPlayer>> areaMap0 = mobsAreaMap.computeIfAbsent(level, k -> CacheBuilder.newBuilder().concurrencyLevel(16).weakValues().build());
         if (areaMap0.asMap().containsKey(uniqueId)) return;
         areaMap0.put(uniqueId, areaMap);
     }
@@ -175,7 +175,7 @@ public class EntitiesCounterUtil {
             task.run();
         }
         // Lophine - perf: update last tick timestamp for throttling
-        lastTickTime.computeIfAbsent(level, _ -> new AtomicLong(0L)).set(System.currentTimeMillis());
+        lastTickTime.computeIfAbsent(level, k -> new AtomicLong(0L)).set(System.currentTimeMillis());
     }
 
     public static NaturalSpawner.SpawnState runRemainingTasks(

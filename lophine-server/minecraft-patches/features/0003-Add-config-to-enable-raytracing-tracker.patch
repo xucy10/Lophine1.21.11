@@ -126,10 +126,14 @@ index 67c0f4027a1e8b364694b5ed8b71965f2fe9b359..0f6e1428cc71c370af45db3e2a4f47c6
      @Override
      public void tick() {
 +        // Luminol start - Ray tracing entity tracker
++        // Lophine start - only create CullTask once, not every tick
 +        if (!fun.bm.lophine.config.modules.experiment.RayTrackingEntityTrackerConfig.enabled) {
-+            if (this.cullTask != null) this.cullTask.signalStop();
-+            this.cullTask = null;
-+        }else {
++            if (this.cullTask != null) {
++                this.cullTask.signalStop();
++                this.cullTask = null;
++            }
++        } else if (this.cullTask == null) {
++            // Create the cull task lazily and only once
 +            final com.logisticscraft.occlusionculling.OcclusionCullingInstance culling = new com.logisticscraft.occlusionculling.OcclusionCullingInstance(
 +                    fun.bm.lophine.config.modules.experiment.RayTrackingEntityTrackerConfig.tracingDistance,
 +                    new dev.tr7zw.entityculling.DefaultChunkDataProvider(this.level())
@@ -141,6 +145,7 @@ index 67c0f4027a1e8b364694b5ed8b71965f2fe9b359..0f6e1428cc71c370af45db3e2a4f47c6
 +                    fun.bm.lophine.config.modules.experiment.RayTrackingEntityTrackerConfig.checkIntervalMs
 +            );
 +        }
++        // Lophine end - only create CullTask once
 +        if (this.cullTask != null) this.cullTask.setup();
 +        if (this.cullTask != null) this.cullTask.requestCullSignal(); // Luminol - Ray tracing entity tracker
 +        // Luminol end

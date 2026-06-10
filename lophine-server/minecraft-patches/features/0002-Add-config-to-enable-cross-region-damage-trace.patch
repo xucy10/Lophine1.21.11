@@ -32,10 +32,19 @@ index 607ce65a719e333ce2275346a356032327d00ccf..dcdb01fe5333d407a10f9872d09992c7
 +        this.awardStat(Stats.ENTITY_KILLED_BY.get(entity.getType()));
 +        this.createWitherRose(entity);
 +
++        // Lophine start - guard: skip if the killer entity has been removed or its world unloaded
++        if (entity.isRemoved() || entity.level() == null) {
++            return;
++        }
++        // Lophine end - guard
++
 +        // the entity might be in another tickregion sometimes, so we need to schedule the task onto the entity
 +        // to ensure thread safe
 +        entity.getBukkitEntity().taskScheduler.schedule((LivingEntity nmsEntity) -> {
 +            try {
++                // Lophine start - double-check entity is still valid when task executes
++                if (nmsEntity.isRemoved()) return;
++                // Lophine end - double-check
 +                nmsEntity.awardKillScore(this, cause);
 +            } catch (Throwable ex) {
 +                LOGGER.error(ex.getMessage(), ex);
@@ -71,8 +80,16 @@ index 7a63f52efca133d9d1a773da2443333009d87113..5bae274f5ee869e540e4330e03af671b
  
 +    // Luminol Start - Cross Region Damage trace
 +    private void damageTransferToAsync(LivingEntity entity, DamageSource damageSource) {
++        // Lophine start - guard: skip if the killer entity has been removed or its world unloaded
++        if (entity.isRemoved() || entity.level() == null) {
++            return;
++        }
++        // Lophine end - guard
 +        entity.getBukkitEntity().taskScheduler.schedule((LivingEntity nmsEntity) -> {
 +            try {
++                // Lophine start - double-check entity is still valid when task executes
++                if (nmsEntity.isRemoved()) return;
++                // Lophine end - double-check
 +                nmsEntity.awardKillScore(this, damageSource);
 +            } catch (Throwable ex) {
 +                LOGGER.error(ex.getMessage(), ex);
