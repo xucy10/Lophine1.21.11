@@ -8,7 +8,7 @@ diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server
 index 607ce65a719e333ce2275346a356032327d00ccf..dcdb01fe5333d407a10f9872d09992c7b438ddeb 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1445,6 +1445,13 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1445,4 +1445,11 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              this.awardStat(Stats.ENTITY_KILLED_BY.get(killCredit.getType()));
              killCredit.awardKillScore(this, damageSource);
              this.createWitherRose(killCredit);
@@ -22,7 +22,7 @@ index 607ce65a719e333ce2275346a356032327d00ccf..dcdb01fe5333d407a10f9872d09992c7
          }
  
          this.level().broadcastEntityEvent(this, EntityEvent.DEATH);
-@@ -1468,6 +1475,24 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1468,5 +1475,31 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
      }
      // Leaves end - exp fix
  
@@ -74,7 +74,7 @@ index 7a63f52efca133d9d1a773da2443333009d87113..5bae274f5ee869e540e4330e03af671b
              }
          }); // Paper end
          this.postDeathDropItems(deathEvent); // Paper
-@@ -1985,6 +1992,18 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -1985,10 +1992,22 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return deathEvent; // Paper
      }
  
@@ -101,7 +101,7 @@ index 7a63f52efca133d9d1a773da2443333009d87113..5bae274f5ee869e540e4330e03af671b
      protected void dropEquipment(ServerLevel level) {
      }
      protected void postDeathDropItems(org.bukkit.event.entity.EntityDeathEvent event) {} // Paper - method for post death logic that cannot be ran before the event is potentially cancelled
-@@ -2612,6 +2631,18 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2612,10 +2631,22 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          }
      }
  
