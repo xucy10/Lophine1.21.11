@@ -26,7 +26,7 @@ diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server
 index 3a5319739f0687fc6f09b2ac8ee31716593fe0de..0000000000000000000000000000000000000000 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -317,11 +317,14 @@ public abstract class PlayerList {
+@@ -317,16 +317,19 @@ public abstract class PlayerList {
  
          org.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerJoin(player);
  
