@@ -2,11 +2,11 @@
 schema_version: 1
 locale: zh-CN
 branch: master
-exported_at: "2026-06-10T13:32:46Z"
+exported_at: "2026-06-10T14:35:30Z"
 modules:
     "":
-        dir_name: Lophine 服务端构建与扩展编排
-        title: Lophine 服务端构建与扩展编排
+        dir_name: Lophine 服务端核心架构与扩展生态
+        title: Lophine 服务端核心架构与扩展生态
         scope:
             - .gitattributes
             - .github\FUNDING.yml
@@ -27,16 +27,74 @@ modules:
             - .qoder\repowiki\knowledge\zh\Lophine 服务端构建与扩展编排\概述.md
             - .qoder\repowiki\knowledge\zh\Lophine 服务端构建与扩展编排\特殊配置与命令.md
             - .qoder\repowiki\knowledge\zh\Lophine 服务端构建与扩展编排\编码规范.md
-            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心功能与协议扩展\_module.yaml
-            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心功能与协议扩展\技术栈.md
-            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心功能与协议扩展\架构设计.md
-            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心功能与协议扩展\概述.md
-            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心功能与协议扩展\编码规范.md
+            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心与扩展功能\_module.yaml
+            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心与扩展功能\技术栈.md
+            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心与扩展功能\架构设计.md
+            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心与扩展功能\概述.md
+            - .qoder\repowiki\knowledge\zh\Lophine 服务端核心与扩展功能\编码规范.md
             - .qoder\repowiki\knowledge\zh\Luminol API 扩展接口\_module.yaml
             - .qoder\repowiki\knowledge\zh\Luminol API 扩展接口\架构设计.md
             - .qoder\repowiki\knowledge\zh\Luminol API 扩展接口\概述.md
             - .qoder\repowiki\knowledge\zh\Luminol API 扩展接口\编码规范.md
             - .qoder\repowiki\knowledge\zh\_index.yaml
+            - .qoder\repowiki\zh\content\API开发指南\API参考手册.md
+            - .qoder\repowiki\zh\content\API开发指南\API开发指南.md
+            - .qoder\repowiki\zh\content\API开发指南\事件系统\事件系统.md
+            - .qoder\repowiki\zh\content\API开发指南\事件系统\事件系统增强.md
+            - .qoder\repowiki\zh\content\API开发指南\性能监控API.md
+            - .qoder\repowiki\zh\content\API开发指南\插件开发\插件功能管理.md
+            - .qoder\repowiki\zh\content\API开发指南\插件开发\插件开发.md
+            - .qoder\repowiki\zh\content\API开发指南\集成指南.md
+            - .qoder\repowiki\zh\content\Folia兼容性.md
+            - .qoder\repowiki\zh\content\协议系统\Jade协议支持.md
+            - .qoder\repowiki\zh\content\协议系统\REI协议支持.md
+            - .qoder\repowiki\zh\content\协议系统\Servux协议支持.md
+            - .qoder\repowiki\zh\content\协议系统\Syncmatica协议支持.md
+            - .qoder\repowiki\zh\content\协议系统\其他协议支持.md
+            - .qoder\repowiki\zh\content\协议系统\协议核心架构.md
+            - .qoder\repowiki\zh\content\协议系统\协议系统.md
+            - .qoder\repowiki\zh\content\工具系统.md
+            - .qoder\repowiki\zh\content\录制回放系统.md
+            - .qoder\repowiki\zh\content\快速开始.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人动作系统\专用动作实现.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人动作系统\交互动作实现.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人动作系统\动作基类设计.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人动作系统\机器人动作系统.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人动作系统\移动动作实现.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人命令系统.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人数据管理.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人架构设计.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人系统.md
+            - .qoder\repowiki\zh\content\机器人系统\机器人配置系统.md
+            - .qoder\repowiki\zh\content\核心架构\Folia兼容性架构.md
+            - .qoder\repowiki\zh\content\核心架构\事件系统架构.md
+            - .qoder\repowiki\zh\content\核心架构\日志系统架构.md
+            - .qoder\repowiki\zh\content\核心架构\核心架构.md
+            - .qoder\repowiki\zh\content\核心架构\模块化设计.md
+            - .qoder\repowiki\zh\content\核心架构\线程安全防护机制.md
+            - .qoder\repowiki\zh\content\核心架构\配置管理系统.md
+            - .qoder\repowiki\zh\content\测试与质量保证.md
+            - .qoder\repowiki\zh\content\社区与贡献.md
+            - .qoder\repowiki\zh\content\补丁管理.md
+            - .qoder\repowiki\zh\content\部署与运维\备份与恢复.md
+            - .qoder\repowiki\zh\content\部署与运维\性能调优\SIMD向量化优化框架.md
+            - .qoder\repowiki\zh\content\部署与运维\性能调优\性能调优.md
+            - .qoder\repowiki\zh\content\部署与运维\故障排除.md
+            - .qoder\repowiki\zh\content\部署与运维\监控与日志.md
+            - .qoder\repowiki\zh\content\部署与运维\部署与运维.md
+            - .qoder\repowiki\zh\content\部署与运维\部署指南.md
+            - .qoder\repowiki\zh\content\配置系统\修复配置.md
+            - .qoder\repowiki\zh\content\配置系统\功能配置.md
+            - .qoder\repowiki\zh\content\配置系统\实验配置.md
+            - .qoder\repowiki\zh\content\配置系统\已移除配置.md
+            - .qoder\repowiki\zh\content\配置系统\杂项配置.md
+            - .qoder\repowiki\zh\content\配置系统\配置系统.md
+            - .qoder\repowiki\zh\content\项目概述\技术架构概览.md
+            - .qoder\repowiki\zh\content\项目概述\核心特性详解.md
+            - .qoder\repowiki\zh\content\项目概述\社区与生态.md
+            - .qoder\repowiki\zh\content\项目概述\项目介绍与定位.md
+            - .qoder\repowiki\zh\content\项目概述\项目概述.md
+            - .qoder\repowiki\zh\meta\repowiki-metadata.json
             - LICENSE.md
             - README.md
             - README_EN.md
@@ -149,6 +207,7 @@ modules:
             - lophine-server\minecraft-patches\features\0042-Add-removed-check-before-all-checks-start-in-addEffe.patch
             - lophine-server\minecraft-patches\features\0043-Leaves-Creative-fly-no-clip.patch
             - lophine-server\minecraft-patches\features\0044-Carpet-features.patch
+            - lophine-server\minecraft-patches\features\0045-Add-Folia-safe-bot-iteration.patch
             - lophine-server\paper-patches\features\0001-Rebrand-to-Lophine.patch
             - lophine-server\paper-patches\features\0002-Purpur-Barrels-and-enderchests-6-rows.patch
             - lophine-server\paper-patches\features\0003-Leaves-Leaves-Protocol-Core.patch
@@ -504,8 +563,8 @@ modules:
         related_to:
             - path: lophine_server
     lophine_server:
-        dir_name: Lophine 服务端核心与扩展功能
-        title: Lophine 服务端核心与扩展功能
+        dir_name: Lophine 服务端核心功能与协议扩展
+        title: Lophine 服务端核心功能与协议扩展
         scope:
             - lophine-server/
         source_files: []
