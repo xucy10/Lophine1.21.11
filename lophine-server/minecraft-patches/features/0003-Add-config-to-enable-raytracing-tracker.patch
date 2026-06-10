@@ -121,7 +121,7 @@ index 67c0f4027a1e8b364694b5ed8b71965f2fe9b359..0f6e1428cc71c370af45db3e2a4f47c6
  
      public Player(Level level, GameProfile gameProfile) {
          super(EntityType.PLAYER, level);
-@@ -245,6 +264,26 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -245,6 +264,31 @@ public abstract class Player extends Avatar implements ContainerUser {
  
      @Override
      public void tick() {
