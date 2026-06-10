@@ -1,0 +1,112 @@
+/*
+ * This file is part of Leaves (https://github.com/LeavesMC/Leaves)
+ *
+ * Leaves is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Leaves is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Leaves. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.leavesmc.leaves.protocol.rei.display;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import org.bukkit.craftbukkit.CraftRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.leavesmc.leaves.protocol.rei.ingredient.EntryIngredient;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * see me.shedaniel.rei.plugin.common.displays.crafting.DefaultShapedDisplay#DefaultShapedDisplay(RecipeHolder)
+ */
+public class ShapedDisplay extends CraftingDisplay {
+    private static final StreamCodec<RegistryFriendlyByteBuf, CraftingDisplay> CODEC = StreamCodec.composite(
+            EntryIngredient.CODEC.apply(ByteBufCodecs.list()),
+            CraftingDisplay::getInputEntries,
+            EntryIngredient.CODEC.apply(ByteBufCodecs.list()),
+            CraftingDisplay::getOutputEntries,
+            ByteBufCodecs.optional(Identifier.STREAM_CODEC),
+            CraftingDisplay::getOptionalLocation,
+            ByteBufCodecs.INT,
+            CraftingDisplay::getWidth,
+            ByteBufCodecs.INT,
+            CraftingDisplay::getHeight,
+            ShapedDisplay::of
+    );
+    private static final Identifier SERIALIZER_ID = Identifier.tryBuild("minecraft", "default/crafting/shaped");
+    private final int width;
+    private final int height;
+
+    public ShapedDisplay(@NotNull RecipeHolder<ShapedRecipe> recipeHolder) {
+        super(
+                ofIngredient(recipeHolder.value()),
+                List.of(EntryIngredient.of(recipeHolder.value().assemble(CraftingInput.EMPTY, CraftRegistry.getMinecraftRegistry()))),
+                recipeHolder.id().identifier()
+        );
+        this.width = recipeHolder.value().getWidth();
+        this.height = recipeHolder.value().getHeight();
+    }
+
+    public ShapedDisplay(@NotNull ShapedCraftingRecipeDisplay recipeDisplay, Identifier id) {
+        super(
+                Display.ofSlotDisplays(recipeDisplay.ingredients()),
+                List.of(ofSlotDisplay(recipeDisplay.result())),
+                id
+        );
+        this.width = recipeDisplay.width();
+        this.height = recipeDisplay.height();
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static CraftingDisplay of(List<EntryIngredient> inputs, List<EntryIngredient> outputs, Optional<Identifier> location, int width, int height) {
+        throw new UnsupportedOperationException();
+    }
+
+    private static List<EntryIngredient> ofIngredient(ShapedRecipe recipe) {
+        return recipe.getIngredients().stream().map(ingredient -> {
+            if (ingredient.isEmpty()) {
+                return EntryIngredient.empty();
+            }
+            ItemStack[] itemStacks = ingredient.get().items()
+                    .map(itemHolder -> new ItemStack(itemHolder, 1))
+                    .toArray(ItemStack[]::new);
+            return EntryIngredient.of(itemStacks);
+        }).toList();
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public Identifier getSerializerId() {
+        return SERIALIZER_ID;
+    }
+
+    public StreamCodec<RegistryFriendlyByteBuf, CraftingDisplay> streamCodec() {
+        return CODEC;
+    }
+}

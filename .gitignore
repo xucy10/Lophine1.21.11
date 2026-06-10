@@ -1,0 +1,16 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+
+/run
+
+/lophine-server/build.gradle.kts
+/lophine-api/build.gradle.kts
+/lophine-server/src/minecraft
+/paper-server
+/paper-api
+/paper-api-generator
+
+.idea/
