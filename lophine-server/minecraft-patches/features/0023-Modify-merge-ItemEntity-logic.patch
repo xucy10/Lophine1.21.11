@@ -9,14 +9,7 @@ diff --git a/net/minecraft/world/entity/item/ItemEntity.java b/net/minecraft/wor
 index f3f067c62dc024a747d059608ae7a2e8740dbff2..1b8a963726ee2b2244d429f1e7e3a08034bfbd70 100644
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -280,10 +280,14 @@ public class ItemEntity extends Entity implements TraceableEntity, ChangePublish
-     }
- 
-     private void tryToMerge(ItemEntity itemEntity) {
-+        // Lophine start - TPS-aware merge throttle
-+        if (fun.bm.lophine.config.modules.misc.ItemEntityPerfConfig.tpsAwareMergeThrottle
-+                && fun.bm.lophine.utils.LophineTpsThrottle.shouldThrottle(fun.bm.lophine.config.modules.misc.ItemEntityPerfConfig.tpsAwareMergeThreshold)) return;
-+        // Lophine end
+@@ -283,7 +283,7 @@ public class ItemEntity extends Entity implements TraceableEntity, ChangePublish
          ItemStack item = this.getItem();
          ItemStack item1 = itemEntity.getItem();
          if (Objects.equals(this.target, itemEntity.target) && areMergable(item, item1)) {
