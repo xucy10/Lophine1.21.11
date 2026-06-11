@@ -85,23 +85,6 @@ dependencies {
 </dependencies>
 ```
 
-## 💬 社区与支持
-
-> 如果您对这个项目感兴趣或有任何问题，请随时向我们提问。
-
-### 加入我们的社区
-
-- **QQ群**: [1015048616](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=QML5kIVsniPi1PlZvnjHQT_02EHsZ5Jc&authKey=%2FTCJsZC7JFQ9sxAroPCKuYnlV57Z5fyqp36ewXZk3Sn4iJ9p4MB1JKdc%2FFcX3HOM&noverify=0&group_code=1015048616)
-- **QQ频道**: [点击加入](https://pd.qq.com/s/eq9krf9j)
-- **Telegram**: [点击加入](https://t.me/LuminolMinecraft)
-- **Discord**: [点击加入](https://discord.gg/Qd7m3V6eDx)
-
-### 获取帮助
-
-- 📋 [提交 Issue](https://github.com/LuminolMC/Lophine/issues)
-- 💬 [GitHub Discussions](https://github.com/LuminolMC/Lophine/discussions)
-- 📖 [项目文档](./docs/)
-
 ## 🐛 问题反馈
 
 当您遇到任何问题时，请向我们提问，我们将尽力解决。请记得：
@@ -110,31 +93,6 @@ dependencies {
 - 📋 **提供完整日志** - 包含错误日志和相关配置信息
 - 🔍 **环境信息** - 说明服务器版本、插件列表等环境详情
 - 🔄 **复现步骤** - 如果可能，请提供问题复现的具体步骤
-
-## 🤝 贡献代码
-
-我们欢迎社区贡献！详细的贡献指南请查看：
-
-- 📖 [贡献指南 (中文)](./docs/CONTRIBUTING.md)
-- 📖 [Contributing Guide (English)](./docs/CONTRIBUTING_EN.md)
-
-## 📊 项目统计
-
-### BStats 数据
-
-![bStats](https://bstats.org/signatures/server-implementation/Lophine.svg "bStats")
-
-## 🎉 特别感谢
-
-### 项目赞助商
-
-<div align="center">
-  <b>感谢 <a href="https://github.com/LegacyLands">LegacyLands</a> 对本项目的赞助</b>
-  <br>
-  <i>如果你想开发跨 Folia/非 Folia 平台的插件，<a href="https://github.com/LegacyLands/legacy-lands-library/">legacy-lands-library</a> 将会是个不错的选择</i>
-  <br><br>
-  <img src="public/image/legacy-lands-logo.png" alt="LegacyLands Logo" width="200">
-</div>
 
 ---
 
