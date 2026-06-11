@@ -62,7 +62,7 @@ public class LophineTpsAllCommand extends RootNode {
             if (reportData != null) {
                 final TickData.SegmentData tpsData = reportData.tpsData().segmentAll();
                 final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
-                final double maxMspt = reportData.timePerTickData().segmentAll().max() / 1.0E6;
+                final double maxMspt = reportData.timePerTickData().segmentAll().greatest() / 1.0E6;
                 final double utilisation = reportData.utilisation() * 100.0;
 
                 sender.sendMessage(Component.text("TPS: " + TWO_DECIMALS.format(tpsData.average()) + " / 20.00")

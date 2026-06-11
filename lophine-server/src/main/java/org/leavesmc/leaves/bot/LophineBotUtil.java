@@ -83,9 +83,9 @@ public final class LophineBotUtil {
 
         // Misrouted: reschedule on the correct region via the Folia entity scheduler
         try {
-            entity.getBukkitEntity().taskScheduler().run(
-                    (org.bukkit.entity.Entity unused) -> work.run(),
-                    null
+            entity.getBukkitEntity().taskScheduler.schedule(
+                    (LivingEntity unused) -> work.run(),
+                    null, 1L
             );
         } catch (Throwable t) {
             LOGGER.warn("Failed to reschedule bot work to owning region: {}", t.getMessage());

@@ -18,7 +18,7 @@ index 7c2d83ca863c2e50c6871938efc426ddefff9b5c..00000000000000000000000000000000
                  if (fun.bm.lophine.config.modules.function.FakeplayerConfig.enable) {
 -                    this.server.getBotList().bots.forEach(bot -> bot.sendFakeDataIfNeed(this, true)); // Leaves - render bot
 +                    // Lophine - Folia-safe: use forEachSafe to avoid cross-region access
-+                    org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, b -> ((org.leavesmc.leaves.bot.ServerBot) b).sendFakeDataIfNeed(this, true));
++                    org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, bot -> ((org.leavesmc.leaves.bot.ServerBot) bot).sendFakeDataIfNeed(this, true));
                  }
                  // Leaves end - bot support
                  // CraftBukkit start
@@ -41,8 +41,8 @@ index 3a5319739f0687fc6f09b2ac8ee31716593fe0de..00000000000000000000000000000000
 -                bot1.sendFakeDataIfNeed(player, true);
 -            }); // Leaves - render bot
 +            // Lophine start - Folia-safe: use forEachSafe to avoid cross-region access
-+            org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, b -> {
-+                org.leavesmc.leaves.bot.ServerBot sb = (org.leavesmc.leaves.bot.ServerBot) b;
++            org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, bot -> {
++                org.leavesmc.leaves.bot.ServerBot sb = (org.leavesmc.leaves.bot.ServerBot) bot;
 +                sb.sendPlayerInfo(player);
 +                sb.sendFakeDataIfNeed(player, true);
 +            });
@@ -58,7 +58,7 @@ index 3a5319739f0687fc6f09b2ac8ee31716593fe0de..00000000000000000000000000000000
          if (fun.bm.lophine.config.modules.function.FakeplayerConfig.enable) {
 -            this.server.getBotList().bots.forEach(bot -> bot.sendFakeDataIfNeed(serverPlayer, true)); // Leaves - render bot
 +            // Lophine - Folia-safe: use forEachSafe to avoid cross-region access
-+            org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, b -> ((org.leavesmc.leaves.bot.ServerBot) b).sendFakeDataIfNeed(serverPlayer, true));
++            org.leavesmc.leaves.bot.LophineBotUtil.forEachSafe(this.server.getBotList().bots, bot -> ((org.leavesmc.leaves.bot.ServerBot) bot).sendFakeDataIfNeed(serverPlayer, true));
          }
          // Leaves end - bot support
  

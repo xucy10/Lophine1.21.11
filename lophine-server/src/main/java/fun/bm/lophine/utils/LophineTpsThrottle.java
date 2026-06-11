@@ -1,6 +1,7 @@
 package fun.bm.lophine.utils;
 
-import net.minecraft.server.MinecraftServer;
+import io.papermc.paper.threadedregions.TickRegionScheduler;
+import ca.spottedleaf.moonrise.common.time.TickData;
 
 /**
  * Lophine - TPS-aware throttling for生电 features.
@@ -42,16 +43,16 @@ public final class LophineTpsThrottle {
      * average, index 1 is 10s, etc.
      */
     public static double[] recentTps() {
-        long[] times = MinecraftServer.getServer().getTickTimes5s();
-        if (times == null || times.length == 0) {
-            return new double[]{20.0, 20.0, 20.0};
+        try {
+            TickData.TickReportData report = TickRegionScheduler.getCurrentRegion()
+                    .getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
+            if (report != null) {
+                double tps = report.tpsData().segmentAll().average();
+                return new double[]{tps, tps, tps};
+            }
+        } catch (Throwable ignored) {
         }
-        double[] result = new double[times.length];
-        for (int i = 0; i < times.length; i++) {
-            // times[i] is in nanoseconds; convert to TPS
-            result[i] = Math.min(20.0, 1_000_000_000.0 / Math.max(times[i], 1));
-        }
-        return result;
+        return new double[]{20.0, 20.0, 20.0};
     }
 
     /**

@@ -94,7 +94,7 @@ public final class LophineRegionSafetyGuard {
         // Schedule on the entity's region thread
         try {
             entity.getBukkitEntity().taskScheduler.schedule(
-                    (org.bukkit.entity.Entity unused) -> task.run(),
+                    (Entity unused) -> task.run(),
                     null, 1L
             );
         } catch (Throwable t) {

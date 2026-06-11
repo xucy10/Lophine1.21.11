@@ -143,7 +143,7 @@ public class ServerBot extends ServerPlayer {
             // Re-schedule on the correct thread to avoid cross-region corruption
             try {
                 this.getBukkitEntity().taskScheduler.schedule(
-                        (org.bukkit.entity.Entity unused) -> this.tick(),
+                        (Entity unused) -> this.tick(),
                         null, 1L
                 );
             } catch (Throwable t) {
