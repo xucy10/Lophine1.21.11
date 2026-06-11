@@ -2,6 +2,7 @@ package fun.bm.lophine.util;
 
 import fun.bm.lophine.config.modules.misc.ItemEntityPerfConfig;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -31,8 +32,11 @@ public final class XpOrbMergeHelper {
 
         AABB searchBox = orb.getBoundingBox().inflate(mergeRadius);
 
-        for (ExperienceOrb other : orb.level().getEntitiesOfClass(
-            ExperienceOrb.class, searchBox,
+        // 1.21.11: Level#getEntitiesOfClass(Class) was removed. Use
+        // getEntities(EntityTypeTest<Entity, ExperienceOrb>, AABB, Predicate)
+        // with EntityTypeTest.forClass instead.
+        for (ExperienceOrb other : orb.level().getEntities(
+            EntityTypeTest.forClass(ExperienceOrb.class), searchBox,
             e -> e != orb && !e.isRemoved() && e.getValue() < maxValue
         )) {
             int combinedValue = orb.getValue() + other.getValue();

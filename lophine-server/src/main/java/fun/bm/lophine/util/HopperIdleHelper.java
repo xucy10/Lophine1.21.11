@@ -67,7 +67,7 @@ public final class HopperIdleHelper {
     }
 
     private static boolean isHopperEmpty(HopperBlockEntity hopper) {
-        List<ItemStack> items = hopper.getItems();
+        List<ItemStack> items = hopper.getContents();
         for (int i = 0, size = items.size(); i < size; i++) {
             if (!items.get(i).isEmpty()) {
                 return false;

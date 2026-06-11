@@ -79,10 +79,10 @@ public class LophineTpsAllCommand extends RootNode {
 
         if (sender instanceof Player player) {
             try {
-                player.taskScheduler.schedule((org.bukkit.entity.LivingEntity nmsEntity) -> {
+                player.getScheduler().run(MinecraftInternalPlugin.INSTANCE, (task) -> {
                     List<Component> result = buildTpsReport();
                     reply.accept(result);
-                }, null, 1L);
+                }, null);
             } catch (Throwable t) {
                 sender.sendMessage(Component.text("获取 TPS 数据失败: " + t.getMessage()).color(NamedTextColor.RED));
             }
