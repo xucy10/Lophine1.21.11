@@ -66,6 +66,7 @@ jobs:
       - name: Clean paperweight caches
         run: |
           rm -rf .gradle/caches/paperweight/upstreams
+          rm -rf .gradle/caches/paperweight/taskCache
           rm -rf lophine-server/.gradle/caches/paperweight
           rm -rf lophine-api/.gradle/caches/paperweight
           rm -rf lophine-server/build lophine-api/build
