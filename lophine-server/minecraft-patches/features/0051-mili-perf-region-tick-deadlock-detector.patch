@@ -1,4 +1,4 @@
-﻿From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: mili Dev <dev@mili.local>
 Date: Mon, 9 Jun 2026 12:00:00 0800
 Subject: [PATCH] mili - wire deadlock detector into per-region tick
