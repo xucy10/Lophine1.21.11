@@ -68,4 +68,43 @@ public class ItemEntityPerfConfig implements IConfigModule {
             WARNING: Values below 0.5 may cause unexpected behavior.
             1.0 = vanilla speed.""")
     public static double hopperTransferBoost = 1.0;
+
+    // ---- Hopper idle optimization ----
+
+    @ConfigInfo(name = "hopper-idle-skip-ticks", comments = """
+            When a hopper is completely idle (all slots empty), it will only
+            check for items every N ticks instead of every tick. This reduces
+            CPU usage for large sorting systems with many idle hoppers.
+            Default 8 means idle hoppers check ~2.5 times per second.
+            Set to 1 to disable (check every tick, vanilla behavior).""")
+    public static int hopperIdleSkipTicks = 8;
+
+    @ConfigInfo(name = "hopper-idle-threshold", comments = """
+            Number of consecutive idle ticks before a hopper enters low-frequency
+            check mode. A hopper is considered idle when all its inventory slots
+            are empty. Default 4 means a hopper must be empty for 4 ticks before
+            the skip-ticks optimization kicks in.""")
+    public static int hopperIdleThreshold = 4;
+
+    // ---- Experience orb merging ----
+
+    @ConfigInfo(name = "xp-orb-merge-radius", comments = """
+            Search radius (in blocks) for merging nearby experience orbs.
+            Larger values merge orbs more aggressively, reducing entity count
+            during mob farming. Default 2.0 balances performance with the
+            visual experience of seeing individual orbs. Set to 0 to disable.""")
+    public static double xpOrbMergeRadius = 2.0;
+
+    @ConfigInfo(name = "xp-orb-merge-interval", comments = """
+            How often (in ticks) each experience orb attempts to merge with
+            nearby orbs. Default 20 means once per second. Lower values merge
+            faster but cost more CPU. Recommended: 10-40.""")
+    public static int xpOrbMergeInterval = 20;
+
+    @ConfigInfo(name = "xp-orb-max-value", comments = """
+            Maximum experience value a single merged orb can hold. Prevents
+            creating excessively large orbs that could cause issues with
+            mending repairs or XP distribution. Default 1000 is roughly
+            equivalent to 20 levels. Set to 0 for unlimited.""")
+    public static int xpOrbMaxValue = 1000;
 }

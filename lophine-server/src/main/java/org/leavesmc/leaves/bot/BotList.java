@@ -196,6 +196,7 @@ public class BotList {
         BotSpawnLocationEvent event = new BotSpawnLocationEvent(bot.getBukkitEntity(), location);
         this.server.server.getPluginManager().callEvent(event);
         location = event.getSpawnLocation();
+        final Location spawnLocation = location;
 
         bot.spawnIn(world);
         bot.gameMode.setLevel(bot.level());
@@ -213,8 +214,8 @@ public class BotList {
 
         Runnable task = () -> {
             // Lophine - Folia safety: double-check we're on the right region thread
-            if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(world, location.blockX() >> 4, location.blockZ() >> 4)) {
-                LophineBotUtil.warnThreadMismatch("placeNewBot", world, location);
+            if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(world, spawnLocation.blockX() >> 4, spawnLocation.blockZ() >> 4)) {
+                LophineBotUtil.warnThreadMismatch("placeNewBot", world, spawnLocation);
             }
             optional.ifPresent(nbt -> {
                 bot.loadAndSpawnEnderPearls(nbt);

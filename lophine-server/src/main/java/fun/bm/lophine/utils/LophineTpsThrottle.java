@@ -1,7 +1,7 @@
 package fun.bm.lophine.utils;
 
-import io.papermc.paper.threadedregions.TickRegionScheduler;
 import ca.spottedleaf.moonrise.common.time.TickData;
+import io.papermc.paper.threadedregions.TickRegionScheduler;
 
 /**
  * Lophine - TPS-aware throttling for生电 features.
@@ -12,6 +12,12 @@ import ca.spottedleaf.moonrise.common.time.TickData;
  * <p>
  * This utility checks the current TPS and returns a throttle factor (0.0 to
  * 1.0) that callers can use to slow down or skip work.
+ *
+ * <p>Threading: {@link TickRegionScheduler#getCurrentRegion()} only returns
+ * a non-null value when called from a region tick thread (or global region
+ * thread). When called from the main thread or any other non-region thread,
+ * this utility returns safe default values of 20.0 TPS so callers don't
+ * accidentally disable生电 features during a synthetic check.
  */
 public final class LophineTpsThrottle {
     private LophineTpsThrottle() {
@@ -41,13 +47,19 @@ public final class LophineTpsThrottle {
     /**
      * Returns the recent TPS values from the server. Index 0 is the 5-second
      * average, index 1 is 10s, etc.
+     *
+     * <p>If called from a non-region thread, returns a safe default of
+     * {@code [20.0, 20.0, 20.0]} (i.e. assume ideal TPS).
      */
     public static double[] recentTps() {
+        if (!isOnRegionThread()) {
+            return new double[]{20.0, 20.0, 20.0};
+        }
         try {
-            TickData.TickReportData report = TickRegionScheduler.getCurrentRegion()
+            final TickData.TickReportData report = TickRegionScheduler.getCurrentRegion()
                     .getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
             if (report != null) {
-                double tps = report.tpsData().segmentAll().average();
+                final double tps = report.tpsData().segmentAll().average();
                 return new double[]{tps, tps, tps};
             }
         } catch (Throwable ignored) {
@@ -78,6 +90,19 @@ public final class LophineTpsThrottle {
             return tps[0];
         } catch (Throwable t) {
             return 20.0;
+        }
+    }
+
+    /**
+     * Returns true if the current thread is a region tick thread (i.e. one
+     * that has a valid {@link TickRegionScheduler#getCurrentRegion()} value).
+     * On non-region threads we skip TPS reads to avoid NPE/null deref.
+     */
+    private static boolean isOnRegionThread() {
+        try {
+            return TickRegionScheduler.getCurrentRegion() != null;
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 }
