@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.protocol;
 
-import fun.bm.lophine.config.modules.function.protocol.AppleSkinProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.AppleSkinProtocolConfig;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

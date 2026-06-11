@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.protocol.rei.payload;
 
-import fun.bm.lophine.LophineLogger;
+import fun.bm.mili.MiliLogger;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
@@ -54,7 +54,7 @@ public record DisplaySyncPayload(
                             } catch (Exception e) {
                                 tmpBuf.release();
                                 buf.writeBoolean(false);
-                                LophineLogger.LOGGER.warn("Failed to encode display: {}", display, e);
+                                MiliLogger.LOGGER.warn("Failed to encode display: {}", display, e);
                                 return;
                             }
                             buf.writeBoolean(true);

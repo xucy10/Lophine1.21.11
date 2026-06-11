@@ -21,8 +21,8 @@ import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.logging.LogUtils;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
-import fun.bm.lophine.config.modules.function.OldFeatureConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.OldFeatureConfig;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.profile.MutablePropertyMap;
 import io.papermc.paper.threadedregions.RegionizedServer;
@@ -213,15 +213,15 @@ public class BotList {
         bot.suppressTrackerForLogin = true;
 
         Runnable task = () -> {
-            // Lophine - Folia safety: double-check we're on the right region thread
+            // mili - Folia safety: double-check we're on the right region thread
             if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(world, spawnLocation.blockX() >> 4, spawnLocation.blockZ() >> 4)) {
-                LophineBotUtil.warnThreadMismatch("placeNewBot", world, spawnLocation);
+                MiliBotUtil.warnThreadMismatch("placeNewBot", world, spawnLocation);
             }
             optional.ifPresent(nbt -> {
                 bot.loadAndSpawnEnderPearls(nbt);
                 bot.loadAndSpawnParentVehicle(nbt);
             });
-            // Lophine - Folia safety: check world still loaded
+            // mili - Folia safety: check world still loaded
             if (world.getCurrentWorldData() == null) {
                 BotList.LOGGER.warn("Bot {} failed to spawn: world data is null, cleaning up maps", bot.getName().getString());
                 // Clean up the maps that were populated before the task was dispatched
@@ -266,7 +266,7 @@ public class BotList {
      * return true if async
      */
     public boolean removeBot(@NotNull ServerBot bot, @NotNull BotRemoveEvent.RemoveReason reason, @Nullable CommandSender remover, boolean save, boolean resume, boolean async) {
-        // Lophine - Folia safety: check world/level availability BEFORE any TickThread call to avoid NPE
+        // mili - Folia safety: check world/level availability BEFORE any TickThread call to avoid NPE
         if (bot.level() == null || bot.level().getCurrentWorldData() == null) {
             return this.forceRemoveBot(bot);
         }
@@ -278,7 +278,7 @@ public class BotList {
     }
 
     /**
-     * Lophine - Folia safety: best-effort cleanup when the bot's region is
+     * mili - Folia safety: best-effort cleanup when the bot's region is
      * no longer available (server shutdown, world unload, etc.).
      * Removes the bot from the internal maps and cancels any pending tasks,
      * but does not touch region-owned state.
@@ -304,7 +304,7 @@ public class BotList {
     }
 
     public boolean removeBot(@NotNull ServerBot bot, @Nullable CommandSender remover, @NotNull BotRemoveEvent.RemoveReason reason, boolean save, boolean resume) {
-        // Lophine - Folia safety: do not attempt region-owned operations if the world
+        // mili - Folia safety: do not attempt region-owned operations if the world
         // has already been unloaded (e.g. server shutdown). Fall back to a safe
         // cleanup that only touches the internal bot maps.
         if (bot.level() == null || bot.level().getCurrentWorldData() == null) {
@@ -404,7 +404,7 @@ public class BotList {
         AtomicInteger received = new AtomicInteger();
         for (ServerBot bot : this.bots) {
             bot.resume = FakeplayerConfig.canResident;
-            // Lophine - Folia safety: if the bot's region is gone, fall back to safe cleanup
+            // mili - Folia safety: if the bot's region is gone, fall back to safe cleanup
             if (bot.level() == null || bot.level().getCurrentWorldData() == null) {
                 forceRemoveBot(bot);
                 continue;
@@ -422,7 +422,7 @@ public class BotList {
 
     private void removeBot(ServerBot bot, AtomicInteger check, AtomicInteger received, AtomicInteger counter) {
         bot.getBukkitEntity().taskScheduler.schedule((Entity unused) -> {
-            // Lophine - Folia safety: cap retry count to prevent infinite loops
+            // mili - Folia safety: cap retry count to prevent infinite loops
             if (counter.get() >= 20) {
                 BotList.LOGGER.warn("Giving up removing bot {} after 20 retries (likely world unloaded or region scheduler exhausted). Falling back to force remove.", bot.getName().getString());
                 forceRemoveBot(bot);
@@ -435,7 +435,7 @@ public class BotList {
             }
             counter.getAndIncrement();
             try {
-                // Lophine - Folia safety: check region availability before touching
+                // mili - Folia safety: check region availability before touching
                 if (bot.level() == null || bot.level().getCurrentWorldData() == null) {
                     forceRemoveBot(bot);
                 } else {

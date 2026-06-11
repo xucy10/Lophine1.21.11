@@ -1,0 +1,24 @@
+﻿From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mili Dev <dev@mili.local>
+Date: Mon, 9 Jun 2026 12:00:00 0800
+Subject: [PATCH] mili - wire deadlock detector into per-region tick
+
+
+diff --git a/io/papermc/paper/threadedregions/TickRegions.java b/io/papermc/paper/threadedregions/TickRegions.java
+index 0000000000000000000000000000000000000000..0000000000000000000000000000000000000000 100644
+--- a/io/papermc/paper/threadedregions/TickRegions.java
++++ b/io/papermc/paper/threadedregions/TickRegions.java
+@@ -482,9 +482,16 @@ public final class TickRegions implements ThreadedRegionizer.RegionCallbacks<Tic
+         @Override
+         protected void tickRegion(final long tickCount, final long startTime, final long scheduledEnd) {
+             final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler(); // Folia - profiler
+             profiler.startTick(); try { // Folia - profiler
++            // mili start - deadlock detector tick timer
++            final long miliTickToken = fun.bm.mili.perf.MiliTickSchedulerHook.onRegionTickStart("region-tick");
++            try { // mili - profile + tick in one try
+             MinecraftServer.getServer().tickServer(startTime, scheduledEnd, TimeUnit.MILLISECONDS.toMillis(10L), this.region);
++            } finally {
++                fun.bm.mili.perf.MiliTickSchedulerHook.onRegionTickEnd(miliTickToken, "region-tick");
++            } // mili end - deadlock detector tick timer
+             } finally { profiler.stopTick(); } // Folia - profiler
+         }

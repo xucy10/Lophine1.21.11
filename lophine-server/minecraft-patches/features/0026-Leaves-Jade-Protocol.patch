@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+﻿From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Bacteriawa <A3167717663@hotmail.com>
 Date: Fri, 13 Feb 2026 16:17:36 +0800
 Subject: [PATCH] Leaves: Jade Protocol
@@ -13,7 +13,7 @@ index 7c2d53ca863c2e50c6871938efc426ddefff9b5c..8c1e6837b0328c66fdda322c3c7ceba3
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
 @@ -1451,7 +1451,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
-         } else if (fun.bm.lophine.config.modules.experiment.EntityDamageSourceTraceConfig.enabled) {
+         } else if (fun.bm.mili.config.modules.experiment.EntityDamageSourceTraceConfig.enabled) {
              final LivingEntity entitylivingnew = this.getKillCreditOrigin();
              if (entitylivingnew != null) {
 -                this.damageTransferToAsync(entitylivingnew, cause);

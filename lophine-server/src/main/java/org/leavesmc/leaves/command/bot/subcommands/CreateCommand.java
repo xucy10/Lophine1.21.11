@@ -19,7 +19,7 @@ package org.leavesmc.leaves.command.bot.subcommands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;

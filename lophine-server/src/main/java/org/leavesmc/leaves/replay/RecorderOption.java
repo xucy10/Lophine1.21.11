@@ -27,7 +27,7 @@ import java.util.List;
 public class RecorderOption {
 
     public int recordDistance = -1;
-    public String serverName = "Lophine";
+    public String serverName = "mili";
     public RecordWeather forceWeather = null;
     public int forceDayTime = -1;
     public boolean ignoreChat = false;

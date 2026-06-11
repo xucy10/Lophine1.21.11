@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.util;
 
-import fun.bm.lophine.config.modules.function.WoolHopperCounterConfig;
+import fun.bm.mili.config.modules.function.WoolHopperCounterConfig;
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.kyori.adventure.text.Component;

@@ -18,7 +18,7 @@
 package org.leavesmc.leaves.protocol.syncmatica;
 
 import com.mojang.authlib.GameProfile;
-import fun.bm.lophine.config.modules.function.protocol.SyncmaticaProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.SyncmaticaProtocolConfig;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static fun.bm.lophine.LophineLogger.LOGGER;
+import static fun.bm.mili.MiliLogger.LOGGER;
 
 @LeavesProtocol.Register(namespace = "syncmatica")
 public class CommunicationManager implements LeavesProtocol {

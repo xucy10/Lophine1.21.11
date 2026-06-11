@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.protocol;
 
-import fun.bm.lophine.config.modules.function.protocol.BBORProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.BBORProtocolConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;

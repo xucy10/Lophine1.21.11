@@ -19,9 +19,9 @@ package org.leavesmc.leaves.bot;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import fun.bm.lophine.LophineLogger;
-import fun.bm.lophine.carpet.config.modules.FakePlayerCompatConfig;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.MiliLogger;
+import fun.bm.mili.carpet.config.modules.FakePlayerCompatConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import net.minecraft.core.NonNullList;
@@ -132,13 +132,13 @@ public class ServerBot extends ServerPlayer {
 
     @Override
     public void tick() {
-        // Lophine - Folia safety: bail out early if the bot has been removed
+        // mili - Folia safety: bail out early if the bot has been removed
         // or the world has been unloaded (e.g. during server shutdown). This
         // prevents NPEs that would otherwise kill the entire tick thread.
         if (this.isRemoved() || this.level() == null || this.level().getCurrentWorldData() == null) {
             return;
         }
-        // Lophine - Folia safety: ensure we tick on the correct region thread
+        // mili - Folia safety: ensure we tick on the correct region thread
         if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(this.level(), this.getX(), this.getZ())) {
             // Re-schedule on the correct thread to avoid cross-region corruption
             try {
@@ -203,7 +203,7 @@ public class ServerBot extends ServerPlayer {
 
     @Override
     public void doTick() {
-        // Lophine - Folia safety: bail out if the bot has been removed or the world unloaded
+        // mili - Folia safety: bail out if the bot has been removed or the world unloaded
         if (this.isRemoved() || this.level() == null || this.level().getCurrentWorldData() == null) {
             return;
         }
@@ -271,11 +271,11 @@ public class ServerBot extends ServerPlayer {
     }
 
     public void networkTick() {
-        // Lophine - Folia safety: bail out if the bot has been removed or the world unloaded
+        // mili - Folia safety: bail out if the bot has been removed or the world unloaded
         if (this.isRemoved() || this.level() == null || this.level().getCurrentWorldData() == null) {
             return;
         }
-        // Lophine - Folia safety: only network tick on the owning region
+        // mili - Folia safety: only network tick on the owning region
         if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(this.level(), this.getX(), this.getZ())) {
             return;
         }
@@ -333,7 +333,7 @@ public class ServerBot extends ServerPlayer {
             teleportTransition.postTeleportTransition().onTransition(this);
             this.isChangingDimension = false;
 
-            // Lophine - We don't have this
+            // mili - We don't have this
 /*            if (LeavesConfig.modify.netherPortalFix) {
                 final ResourceKey<Level> fromDim = fromLevel.dimension();
                 final ResourceKey<Level> toDim = level().dimension();
@@ -513,7 +513,7 @@ public class ServerBot extends ServerPlayer {
         ChunkMap.TrackedEntity entityTracker = this.moonrise$getTrackedEntity();
 
         if (entityTracker == null) {
-            LophineLogger.LOGGER.warn("Fakeplayer cant get entity tracker for {}", this.getId());
+            MiliLogger.LOGGER.warn("Fakeplayer cant get entity tracker for {}", this.getId());
             return;
         }
 
@@ -697,7 +697,7 @@ public class ServerBot extends ServerPlayer {
     }
 
     private void tickAutoFish() {
-        if (!fun.bm.lophine.carpet.config.modules.FakePlayerCompatConfig.fakePlayerAutoFish || this.hasActiveAction("fish")) {
+        if (!fun.bm.mili.carpet.config.modules.FakePlayerCompatConfig.fakePlayerAutoFish || this.hasActiveAction("fish")) {
             this.autoFishCooldown = 0;
             return;
         }

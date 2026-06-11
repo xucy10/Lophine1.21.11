@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+﻿From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Helvetica Volubi <suisuroru@blue-millennium.fun>
 Date: Thu, 4 Sep 2025 02:14:16 +0800
 Subject: [PATCH] Add config to enable function command
@@ -13,7 +13,7 @@ index 4fa276ba05a550cdf7ce48617056c5a4d4a18006..6cb0d4daf0f275b95d5ca09275e40ab3
          FillBiomeCommand.register(this.dispatcher, context);
          ForceLoadCommand.register(this.dispatcher);
 -        //FunctionCommand.register(this.dispatcher); // Folia - region threading - TODO
-+        if (fun.bm.lophine.config.modules.experiment.CommandConfig.function) {
++        if (fun.bm.mili.config.modules.experiment.CommandConfig.function) {
 +            FunctionCommand.register(this.dispatcher); // Folia - region threading - TODO
 +        }
          GameModeCommand.register(this.dispatcher);

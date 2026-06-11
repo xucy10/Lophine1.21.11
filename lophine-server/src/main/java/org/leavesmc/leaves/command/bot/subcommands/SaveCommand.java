@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.command.bot.subcommands;
 
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;

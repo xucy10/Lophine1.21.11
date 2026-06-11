@@ -19,7 +19,7 @@ package org.leavesmc.leaves.protocol.jade;
 
 import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.mojang.logging.LogUtils;
-import fun.bm.lophine.config.modules.function.protocol.JadeProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.JadeProtocolConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

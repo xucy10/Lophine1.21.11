@@ -21,7 +21,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;

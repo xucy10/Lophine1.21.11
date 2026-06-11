@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+﻿From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Helvetica Volubi <suisuroru@blue-millennium.fun>
 Date: Mon, 19 May 2025 00:06:03 +0800
 Subject: [PATCH] Spawn invulnerable time
@@ -29,7 +29,7 @@ index dcdb01fe5333d407a10f9872d09992c7b438ddeb..6df8f98afa7810815b8d7c86b3dac57c
              return false;
          } else {
 +            // Lophine start - spawn invulnerable time
-+            if (fun.bm.lophine.config.modules.function.OldFeatureConfig.spawnInvulnerableTime) {
++            if (fun.bm.mili.config.modules.function.OldFeatureConfig.spawnInvulnerableTime) {
 +                if (this.spawnInvulnerableTime > 0 && !damageSource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 +                    return false;
 +                }

@@ -19,8 +19,8 @@ package org.leavesmc.leaves.bot.agent.configs;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import fun.bm.lophine.LophineLogger;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.MiliLogger;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import me.earthme.luminol.utils.NullPlugin;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
@@ -74,7 +74,7 @@ public class SimulationDistanceConfig extends AbstractBotConfig<Integer, Simulat
 
     public void load(@NotNull CompoundTag nbt, int count) {
         if (count > 60) {
-            LophineLogger.LOGGER.error("Failed to load simulation distance for a fakeplayer after 60 attempts");
+            MiliLogger.LOGGER.error("Failed to load simulation distance for a fakeplayer after 60 attempts");
             return;
         }
         if (this.bot != null) {

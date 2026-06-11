@@ -26,7 +26,7 @@ public final class LeavesHooks extends PaperHooks {
 
     @Override
     public String getBrand() {
-        return "Lophine"; // Lophine - rebrand
+        return "mili"; // mili - rebrand
     }
 
     @Override

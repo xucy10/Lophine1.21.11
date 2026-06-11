@@ -19,7 +19,7 @@ package org.leavesmc.leaves.bot;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

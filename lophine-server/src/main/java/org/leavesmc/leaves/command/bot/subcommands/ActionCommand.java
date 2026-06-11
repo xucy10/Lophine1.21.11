@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.command.bot.subcommands;
 
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.jetbrains.annotations.NotNull;
 import org.leavesmc.leaves.bot.ServerBot;

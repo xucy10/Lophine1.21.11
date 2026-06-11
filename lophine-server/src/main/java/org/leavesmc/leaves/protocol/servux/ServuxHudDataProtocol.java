@@ -18,9 +18,9 @@
 package org.leavesmc.leaves.protocol.servux;
 
 import com.mojang.serialization.DataResult;
-import fun.bm.lophine.config.modules.function.protocol.ServuxProtocolConfig;
-import fun.bm.lophine.utils.concurrent.AbstractConcurrentTable;
-import fun.bm.lophine.utils.concurrent.OptimizedConcurrentTable;
+import fun.bm.mili.config.modules.function.protocol.ServuxProtocolConfig;
+import fun.bm.mili.utils.concurrent.AbstractConcurrentTable;
+import fun.bm.mili.utils.concurrent.OptimizedConcurrentTable;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

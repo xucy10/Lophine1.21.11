@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.bot.agent.actions;
 
-import fun.bm.lophine.carpet.config.modules.FakePlayerCompatConfig;
+import fun.bm.mili.carpet.config.modules.FakePlayerCompatConfig;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;

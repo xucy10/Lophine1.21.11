@@ -18,7 +18,7 @@
 package org.leavesmc.leaves.command.bot.subcommands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import net.kyori.adventure.text.Component;

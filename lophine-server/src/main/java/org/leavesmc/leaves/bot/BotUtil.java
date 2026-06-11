@@ -18,8 +18,8 @@
 package org.leavesmc.leaves.bot;
 
 import com.google.common.base.Charsets;
-import fun.bm.lophine.carpet.config.modules.FakePlayerCompatConfig;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.carpet.config.modules.FakePlayerCompatConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;

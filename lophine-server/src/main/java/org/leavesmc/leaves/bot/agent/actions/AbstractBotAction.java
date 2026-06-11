@@ -19,7 +19,7 @@ package org.leavesmc.leaves.bot.agent.actions;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fun.bm.lophine.LophineLogger;
+import fun.bm.mili.MiliLogger;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.tuple.Pair;
@@ -139,7 +139,7 @@ public abstract class AbstractBotAction<E extends AbstractBotAction<E>> {
                 e.providePlayer(bot);
                 e.consume();
             } catch (Exception e) {
-                LophineLogger.LOGGER.error("An error occurred while executing bot {}, action {}", bot.displayName, this.name, e);
+                MiliLogger.LOGGER.error("An error occurred while executing bot {}, action {}", bot.displayName, this.name, e);
             }
 
             if (result) {

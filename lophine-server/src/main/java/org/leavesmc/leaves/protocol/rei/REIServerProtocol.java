@@ -20,7 +20,7 @@ package org.leavesmc.leaves.protocol.rei;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
-import fun.bm.lophine.config.modules.function.protocol.REIServerProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.REIServerProtocolConfig;
 import io.netty.buffer.Unpooled;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.RegistryAccess;

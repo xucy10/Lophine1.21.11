@@ -18,9 +18,9 @@
 package org.leavesmc.leaves.bot.agent.configs;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import fun.bm.lophine.LophineLogger;
-import fun.bm.lophine.config.modules.experiment.CommandConfig;
-import fun.bm.lophine.config.modules.function.FakeplayerConfig;
+import fun.bm.mili.MiliLogger;
+import fun.bm.mili.config.modules.experiment.CommandConfig;
+import fun.bm.mili.config.modules.function.FakeplayerConfig;
 import me.earthme.luminol.utils.FoliaServerWaypointManager;
 import me.earthme.luminol.utils.NullPlugin;
 import net.minecraft.nbt.CompoundTag;
@@ -48,12 +48,12 @@ public class LocatorBarConfig extends AbstractBotConfig<Boolean, LocatorBarConfi
 
     public void setValue(@NotNull Boolean value, int count) throws IllegalArgumentException {
         if (count > 60) {
-            LophineLogger.LOGGER.error("Failed to set locator bar for a fakeplayer after 60 attempts");
+            MiliLogger.LOGGER.error("Failed to set locator bar for a fakeplayer after 60 attempts");
             return;
         }
         if (this.bot != null) {
             this.value = value;
-            FoliaServerWaypointManager manager = this.bot.level().getWaypointManager(); // Lophine - waypoint for adapt of luminol ver
+            FoliaServerWaypointManager manager = this.bot.level().getWaypointManager(); // mili - waypoint for adapt of luminol ver
             if (value) {
                 manager.trackWaypoint(this.bot);
             } else {

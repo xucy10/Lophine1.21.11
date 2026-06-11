@@ -19,7 +19,7 @@ package org.leavesmc.leaves.protocol.servux;
 
 import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.mojang.logging.LogUtils;
-import fun.bm.lophine.config.modules.function.protocol.ServuxProtocolConfig;
+import fun.bm.mili.config.modules.function.protocol.ServuxProtocolConfig;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

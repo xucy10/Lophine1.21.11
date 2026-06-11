@@ -17,7 +17,7 @@
 
 package org.leavesmc.leaves.util;
 
-import fun.bm.lophine.LophineLogger;
+import fun.bm.mili.MiliLogger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -85,7 +85,7 @@ public class UpdateSuppressionException extends RuntimeException {
 
     public void consume() {
         submitEvent();
-        LophineLogger.LOGGER.info(getMessage());
+        MiliLogger.LOGGER.info(getMessage());
     }
 
     private void submitEvent() {
