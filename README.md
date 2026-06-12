@@ -1,9 +1,9 @@
-<div align="center">
-  <img src="./public/image/lophine/lophine3.png" alt="Lophine Logo" width="300">
+ 
+  # Mili
   
-  # Lophine
-  
-  *Lophine 是一个基于Luminol的分支，具有许多有用的优化和可配置的原版特性，目标是在Folia上实现更多生电的内容（请注意，完整生电请使用Fabric）*
+  *Mili 是一个基于Lophine的分支，具有许多有用的优化和可配置的原版特性，目标是在Folia上实现更多生电的内容（请注意，完整生电请使用Fabric）*
+
+  *在本分支出现问题请不要 前往Lophine提交issues
   
   ![Created At](https://img.shields.io/github/created-at/LuminolMC/Lophine?style=for-the-badge&color=blue)
   [![License](https://img.shields.io/github/license/LuminolMC/Lophine?style=for-the-badge&color=green)](LICENSE.md)
@@ -31,9 +31,6 @@
 
 ## 📥 下载
 
-### 稳定版本
-所有发布版本都可以在 [Releases](https://github.com/LuminolMC/Lophine/releases) 页面找到。
-
 ### 开发版本
 如果您想体验最新功能，可以通过以下步骤自行构建。
 
@@ -41,49 +38,14 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/LuminolMC/Lophine.git
-cd Lophine
+git clone https://github.com/xucy10/Mili.git
+cd Mili
 
 # 应用补丁并构建 Paperclip JAR
 ./gradlew applyAllPatches && ./gradlew createMojmapPaperclipJar
 ```
 
 构建完成后，您可以在 `lophine-server/build/libs` 目录中找到生成的 JAR 文件。
-
-## 🔌 API 使用
-
-### Gradle 配置
-
-```kotlin
-repositories {
-    maven {
-        url = "https://repo.menthamc.org/repository/maven-public/"
-    }
-}
-
-dependencies {
-    compileOnly("fun.bm.lophine:lophine-api:$VERSION")
-}
-```
-
-### Maven 配置
-
-```xml
-<repositories>
-    <repository>
-        <id>menthamc</id>
-        <url>https://repo.menthamc.org/repository/maven-public/</url>
-    </repository>
-</repositories>
-
-<dependencies>
-    <dependency>
-        <groupId>fun.bm.lophine</groupId>
-        <artifactId>luminol-api</artifactId>
-        <version>$VERSION</version>
-    </dependency>
-</dependencies>
-```
 
 ## 🐛 问题反馈
 
@@ -99,16 +61,6 @@ dependencies {
 ## ⭐ 请给我们一个 Star！
 
 > 你的每一个免费的 ⭐Star 就是我们每一个前进的动力。
-
-### Star 历史
-
-<a href="https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&LuminolMC/Lophine&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol%2CLuminolMC/Lophine&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol%2CLuminolMC/Lophine&type=Date" />
-    <img alt="Star历史表" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol%2CLuminolMC/Lophine&type=Date" />
-  </picture>
-</a>
 
 <div align="center">
   <b>如果这个项目对您有帮助，请不要忘记给我们一个 ⭐Star！</b>
