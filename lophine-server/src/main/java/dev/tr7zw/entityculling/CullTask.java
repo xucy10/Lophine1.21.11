@@ -4,7 +4,7 @@ import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 import dev.tr7zw.entityculling.versionless.access.Cullable;
-import fun.bm.lophine.config.modules.experiment.RayTrackingEntityTrackerConfig;
+import fun.bm.mili.config.modules.experiment.RayTrackingEntityTrackerConfig;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;

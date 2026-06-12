@@ -1,5 +1,6 @@
 package fun.bm.mili.perf;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.mojang.logging.LogUtils;
 import io.papermc.paper.threadedregions.TickRegions;
 import me.earthme.luminol.config.IConfigModule;

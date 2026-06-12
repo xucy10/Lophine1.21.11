@@ -1,5 +1,6 @@
 package fun.bm.mili.perf;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.mojang.logging.LogUtils;
 import me.earthme.luminol.config.IConfigModule;
 import me.earthme.luminol.config.flags.ConfigClassInfo;
@@ -160,12 +161,12 @@ public class MiliTickProfiler implements IConfigModule {
      * AutoCloseable sample handle. Use try-with-resources to ensure
      * measurement completes even on exception.
      */
-    public static final class Sample implements AutoCloseable {
+    public static class Sample implements AutoCloseable {
         private final String name;
         private final long startNanos;
         private boolean closed = false;
 
-        private Sample(String name, long startNanos) {
+        Sample(String name, long startNanos) {
             this.name = name;
             this.startNanos = startNanos;
         }
