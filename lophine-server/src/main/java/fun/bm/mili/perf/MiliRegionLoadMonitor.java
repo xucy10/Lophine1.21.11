@@ -14,6 +14,9 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -126,46 +129,64 @@ public class MiliRegionLoadMonitor implements IConfigModule {
 
     private static void sampleLevel(ServerLevel level, long nowNanos) {
         try {
+            final String levelName = level.dimension().location().toString();
             level.regioniser.computeForAllRegions(region -> {
                 TickRegions.TickRegionData data = region.getData();
                 if (data == null) {
                     return;
                 }
                 long regionId = data.id;
-                // The scheduler handle exposes a getTickReport5s-style API
-                // for average MSPT. We use 5s window so a single short
-                // sample window doesn't dominate.
-                long avgTickNanos = 0L;
+
+                // Try to get MSPT from the region scheduling handle
+                double mspt = -1.0;
+                double tps = -1.0;
                 try {
-                    // Use the time per tick data if available via TickData
-                    // The region stats don't include MSPT directly, so we
-                    // fall back to chunk/entity counts for the load score.
-                    // MSPT snapshotting is expensive to add here; we leave
-                    // it to existing TPS bar.
+                    var report = data.getRegionSchedulingHandle().getTickReport5s(nowNanos);
+                    if (report != null) {
+                        mspt = report.timePerTickData().segmentAll().average() / 1.0E6;
+                        tps = report.tpsData().segmentAll().average();
+                    }
                 } catch (Throwable ignored) {
                 }
+
                 TickRegions.RegionStats stats = data.getRegionStats();
                 int chunkCount = stats.getChunkCount();
                 int entityCount = stats.getEntityCount();
                 int playerCount = stats.getPlayerCount();
 
                 RegionSample sample = SAMPLES.computeIfAbsent(regionId, k -> new RegionSample());
+                sample.levelName = levelName;
                 sample.chunkCount = chunkCount;
                 sample.entityCount = entityCount;
                 sample.playerCount = playerCount;
                 sample.lastSampleNanos = nowNanos;
                 sample.samplesTaken++;
 
-                // We don't have MSPT in the public RegionStats API, so we
-                // compute a "load score" = chunks + 8 * entities. Entities
-                // dominate because each entity costs more per tick than
-                // chunks. This is a heuristic but it's stable across runs.
+                // Update MSPT/TPS if available
+                if (mspt >= 0) {
+                    sample.lastMspt = mspt;
+                    if (mspt > sample.peakMspt) {
+                        sample.peakMspt = mspt;
+                    }
+                    sample.emaMspt = 0.9 * sample.emaMspt + 0.1 * mspt;
+                }
+                if (tps >= 0) {
+                    sample.lastTps = tps;
+                }
+
+                // Load score = chunks + 8 * entities, entities dominate tick cost
                 double loadScore = chunkCount + 8.0 * entityCount;
                 if (loadScore > sample.peakLoadScore) {
                     sample.peakLoadScore = loadScore;
                 }
-                // EMA for stability
                 sample.emaLoadScore = 0.9 * sample.emaLoadScore + 0.1 * loadScore;
+
+                // Track consecutive slow samples
+                if (mspt >= slowRegionMsptThreshold) {
+                    sample.consecutiveSlow++;
+                } else {
+                    sample.consecutiveSlow = 0;
+                }
             });
         } catch (Throwable t) {
             LOGGER.debug("mili region load monitor: sampleLevel error: {}", t.getMessage());
@@ -201,20 +222,113 @@ public class MiliRegionLoadMonitor implements IConfigModule {
 
     private static String buildSummary() {
         StringBuilder sb = new StringBuilder();
-        sb.append("mili region load summary (peak load score, current chunks/entities/players):\n");
+        sb.append("===== mili region load summary =====\n");
+
+        // Aggregate totals
+        int totalRegions = SAMPLES.size();
+        int activeRegions = 0;
+        int totalEntities = 0;
+        int totalChunks = 0;
+        int totalPlayers = 0;
+        int slowRegions = 0;
+
+        List<Map.Entry<Long, RegionSample>> sorted = new ArrayList<>(SAMPLES.entrySet());
+        sorted.sort((a, b) -> Double.compare(b.getValue().emaLoadScore, a.getValue().emaLoadScore));
+
+        for (Map.Entry<Long, RegionSample> e : sorted) {
+            RegionSample s = e.getValue();
+            if (s.entityCount > 0 || s.chunkCount > 0 || s.playerCount > 0) {
+                activeRegions++;
+            }
+            totalEntities += s.entityCount;
+            totalChunks += s.chunkCount;
+            totalPlayers += s.playerCount;
+            if (s.consecutiveSlow >= slowRegionConsecutive) {
+                slowRegions++;
+            }
+        }
+
+        sb.append(String.format("  totals: %d regions (%d active) | chunks=%d entities=%d players=%d | slow=%d%n",
+                totalRegions, activeRegions, totalChunks, totalEntities, totalPlayers, slowRegions));
+
+        // Show top 15 active regions (skip zero-load ones)
+        int shown = 0;
+        for (Map.Entry<Long, RegionSample> e : sorted) {
+            RegionSample s = e.getValue();
+            if (s.entityCount == 0 && s.chunkCount == 0 && s.playerCount == 0 && s.emaLoadScore < 1.0) {
+                continue;
+            }
+            if (shown >= 15) break;
+
+            String loadTag = loadTag(s);
+            String msptInfo = s.lastMspt >= 0
+                    ? String.format(" mspt=%.1f/avg=%.1f", s.lastMspt, s.emaMspt)
+                    : "";
+            String tpsInfo = s.lastTps >= 0
+                    ? String.format(" tps=%.1f", s.lastTps)
+                    : "";
+            String slowWarn = s.consecutiveSlow >= slowRegionConsecutive ? " [SLOW]" : "";
+
+            sb.append(String.format("  [%s] #%d %s: chunks=%d ent=%d ply=%d | ema=%.0f peak=%.0f%s%s%s%n",
+                    loadTag, e.getKey(), s.levelName,
+                    s.chunkCount, s.entityCount, s.playerCount,
+                    s.emaLoadScore, s.peakLoadScore,
+                    msptInfo, tpsInfo, slowWarn));
+            shown++;
+        }
+        if (shown == 0) {
+            sb.append("  (all regions idle)\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns structured region data for Adventure component display.
+     * Each entry is a snapshot suitable for rendering in-game.
+     */
+    public static List<RegionDisplayData> getDisplayData() {
+        List<RegionDisplayData> result = new ArrayList<>();
         SAMPLES.entrySet().stream()
                 .sorted((a, b) -> Double.compare(b.getValue().emaLoadScore, a.getValue().emaLoadScore))
                 .limit(20)
-                .forEach(e -> {
-                    RegionSample s = e.getValue();
-                    sb.append(String.format("  region #%d: peak=%.1f ema=%.1f chunks=%d entities=%d players=%d samples=%d%n",
-                            e.getKey(), s.peakLoadScore, s.emaLoadScore,
-                            s.chunkCount, s.entityCount, s.playerCount, s.samplesTaken));
-                });
-        if (SAMPLES.isEmpty()) {
-            sb.append("  (no samples yet)\n");
+                .forEach(e -> result.add(new RegionDisplayData(
+                        e.getKey(), e.getValue())));
+        return Collections.unmodifiableList(result);
+    }
+
+    private static String loadTag(RegionSample s) {
+        if (s.entityCount == 0 && s.chunkCount == 0 && s.emaLoadScore < 1.0) return "IDLE";
+        if (s.emaLoadScore < 500) return "LOW ";
+        if (s.emaLoadScore < 2000) return "MED ";
+        if (s.emaLoadScore < 5000) return "HIGH";
+        return "CRIT";
+    }
+
+    /**
+     * Snapshot of a single region's data for Adventure component rendering.
+     */
+    public record RegionDisplayData(
+            long regionId,
+            String levelName,
+            int chunkCount,
+            int entityCount,
+            int playerCount,
+            double emaLoadScore,
+            double peakLoadScore,
+            double lastMspt,
+            double emaMspt,
+            double peakMspt,
+            double lastTps,
+            long samplesTaken,
+            int consecutiveSlow,
+            String loadTag
+    ) {
+        RegionDisplayData(long id, RegionSample s) {
+            this(id, s.levelName, s.chunkCount, s.entityCount, s.playerCount,
+                    s.emaLoadScore, s.peakLoadScore, s.lastMspt, s.emaMspt,
+                    s.peakMspt, s.lastTps, s.samplesTaken, s.consecutiveSlow,
+                    loadTag(s).trim());
         }
-        return sb.toString();
     }
 
     public static int getTrackedRegionCount() {
@@ -246,12 +360,18 @@ public class MiliRegionLoadMonitor implements IConfigModule {
      * TickRegionData.id (which is stable for the region's lifetime).
      */
     private static final class RegionSample {
+        volatile String levelName = "unknown";
         volatile int chunkCount;
         volatile int entityCount;
         volatile int playerCount;
         volatile double peakLoadScore;
         volatile double emaLoadScore;
+        volatile double lastMspt = -1.0;
+        volatile double emaMspt;
+        volatile double peakMspt;
+        volatile double lastTps = -1.0;
         volatile long lastSampleNanos;
         volatile long samplesTaken;
+        volatile int consecutiveSlow;
     }
 }

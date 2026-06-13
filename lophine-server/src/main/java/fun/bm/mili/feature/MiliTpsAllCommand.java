@@ -104,40 +104,82 @@ public class MiliTpsAllCommand extends RootNode {
             final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region =
                     TickRegionScheduler.getCurrentRegion();
             if (region == null || region.getData() == null) {
-                lines.add(Component.text("无法获取当前区域 (region 尚未初始化?)").color(NamedTextColor.RED));
+                lines.add(Component.text("\u65e0\u6cd5\u83b7\u53d6\u5f53\u524d\u533a\u57df (region \u5c1a\u672a\u521d\u59cb\u5316?)").color(NamedTextColor.RED));
                 return lines;
             }
             final TickData.TickReportData reportData =
                     region.getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
             final TickRegions.RegionStats regionStats = region.getData().getRegionStats();
-
-            lines.add(Component.text("===== mili 区域 TPS/MSPT 状态 =====")
+            final long regionId = region.getData().id;
+    
+            // Header with region info
+            lines.add(Component.text("===== mili \u533a\u57df TPS/MSPT \u72b6\u6001 =====")
                     .color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
-
+            lines.add(Component.text("  \u533a\u57df #" + regionId)
+                    .color(NamedTextColor.DARK_GRAY)
+                    .append(Component.text("  5s \u7a97\u53e3\u5e73\u5747\u503c").color(NamedTextColor.DARK_GRAY)));
+    
             if (reportData != null) {
                 final TickData.SegmentData tpsData = reportData.tpsData().segmentAll();
                 final double tps = tpsData.average();
                 final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
                 final double maxMspt = reportData.timePerTickData().segmentAll().greatest() / 1.0E6;
                 final double utilisation = reportData.utilisation() * 100.0;
-
-                lines.add(Component.text("TPS: " + TWO_DECIMALS.format(tps) + " / 20.00").color(tpsColor(tps)));
-                lines.add(Component.text("MSPT: " + TWO_DECIMALS.format(mspt) + " ms (峰值 " + TWO_DECIMALS.format(maxMspt) + " ms)")
-                        .color(msptColor(mspt)));
-                lines.add(Component.text("区域使用率: " + ONE_DECIMAL.format(utilisation) + "%")
-                        .color(utilisation >= 80 ? NamedTextColor.RED : (utilisation >= 50 ? NamedTextColor.YELLOW : NamedTextColor.GREEN)));
+    
+                // TPS with bar
+                lines.add(Component.text("  TPS: ").color(NamedTextColor.GRAY)
+                        .append(Component.text(TWO_DECIMALS.format(tps) + " / 20.00").color(tpsColor(tps)))
+                        .append(Component.text("  " + tpsBar(tps)).color(NamedTextColor.DARK_GRAY)));
+    
+                // MSPT with hover for peak
+                lines.add(Component.text("  MSPT: ").color(NamedTextColor.GRAY)
+                        .append(Component.text(TWO_DECIMALS.format(mspt) + " ms").color(msptColor(mspt)))
+                        .append(Component.text("  (\u5cf0\u503c " + TWO_DECIMALS.format(maxMspt) + " ms)")
+                                .color(NamedTextColor.DARK_GRAY)));
+    
+                // Utilisation bar
+                NamedTextColor utilColor = utilisation >= 80 ? NamedTextColor.RED
+                        : (utilisation >= 50 ? NamedTextColor.YELLOW : NamedTextColor.GREEN);
+                lines.add(Component.text("  \u4f7f\u7528\u7387: ").color(NamedTextColor.GRAY)
+                        .append(Component.text(ONE_DECIMAL.format(utilisation) + "%").color(utilColor))
+                        .append(Component.text("  " + utilBar(utilisation)).color(utilColor)));
+    
+                // Separator
+                lines.add(Component.text("  \u2501".repeat(20)).color(NamedTextColor.DARK_GRAY));
             } else {
-                lines.add(Component.text("区域数据尚未收集 (服务器启动时间过短?)").color(NamedTextColor.GRAY));
+                lines.add(Component.text("  \u533a\u57df\u6570\u636e\u5c1a\u672a\u6536\u96c6 (\u670d\u52a1\u5668\u542f\u52a8\u65f6\u95f4\u8fc7\u77ed?)").color(NamedTextColor.GRAY));
             }
-
-            lines.add(Component.text("--- 区域统计 ---").color(NamedTextColor.YELLOW));
-            lines.add(Component.text("区块数: " + regionStats.getChunkCount()).color(NamedTextColor.WHITE));
-            lines.add(Component.text("玩家数: " + regionStats.getPlayerCount()).color(NamedTextColor.WHITE));
-            lines.add(Component.text("实体数: " + regionStats.getEntityCount()).color(NamedTextColor.WHITE));
+    
+            // Region stats with better formatting
+            lines.add(Component.text("  \u533a\u57df\u7edf\u8ba1").color(NamedTextColor.YELLOW));
+            lines.add(Component.text("    \u533a\u5757: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(String.valueOf(regionStats.getChunkCount())).color(NamedTextColor.WHITE)));
+            lines.add(Component.text("    \u5b9e\u4f53: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(String.valueOf(regionStats.getEntityCount())).color(NamedTextColor.WHITE)));
+            lines.add(Component.text("    \u73a9\u5bb6: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(String.valueOf(regionStats.getPlayerCount())).color(NamedTextColor.WHITE)));
         } catch (Throwable t) {
-            lines.add(Component.text("获取 TPS 数据失败: " + t.getMessage()).color(NamedTextColor.RED));
+            lines.add(Component.text("\u83b7\u53d6 TPS \u6570\u636e\u5931\u8d25: " + t.getMessage()).color(NamedTextColor.RED));
         }
         return lines;
+    }
+    
+    /**
+     * Build a simple TPS bar: \u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591
+     */
+    private static String tpsBar(double tps) {
+        int filled = (int) Math.round(tps / 20.0 * 10);
+        filled = Math.max(0, Math.min(10, filled));
+        return "\u2588".repeat(filled) + "\u2591".repeat(10 - filled);
+    }
+    
+    /**
+     * Build a utilisation bar.
+     */
+    private static String utilBar(double pct) {
+        int filled = (int) Math.round(pct / 100.0 * 10);
+        filled = Math.max(0, Math.min(10, filled));
+        return "\u2588".repeat(filled) + "\u2591".repeat(10 - filled);
     }
 
     private static NamedTextColor tpsColor(double tps) {

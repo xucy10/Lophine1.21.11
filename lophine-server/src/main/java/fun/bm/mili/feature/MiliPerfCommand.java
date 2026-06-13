@@ -2,9 +2,11 @@ package fun.bm.mili.feature;
 
 import fun.bm.mili.perf.MiliAffinityAutoTuner;
 import fun.bm.mili.perf.MiliRegionLoadMonitor;
+import fun.bm.mili.perf.MiliRegionLoadMonitor.RegionDisplayData;
 import fun.bm.mili.perf.MiliTickProfiler;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.openhft.affinity.Affinity;
@@ -12,7 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.leavesmc.leaves.command.CommandContext;
 import org.leavesmc.leaves.command.RootNode;
 
+import java.text.DecimalFormat;
 import java.util.BitSet;
+import java.util.List;
 
 /**
  * mili - /lophine-perf command.
@@ -37,6 +41,9 @@ import java.util.BitSet;
  * <p>Aliases: {@code /lperf}, {@code /lophineperf}.
  */
 public class MiliPerfCommand extends RootNode {
+    private static final DecimalFormat F1 = new DecimalFormat("#,##0.0");
+    private static final DecimalFormat F2 = new DecimalFormat("#,##0.00");
+
     public MiliPerfCommand() {
         super("lophine-perf", "lophine.commands.perf");
     }
@@ -108,15 +115,129 @@ public class MiliPerfCommand extends RootNode {
 
     private void sendRegions(CommandSourceStack stack) {
         stack.getSender().sendMessage(header("mili 区域负载摘要"));
-        String summary = MiliRegionLoadMonitor.getLatestSummary();
-        if (summary == null || summary.isEmpty()) {
+        List<RegionDisplayData> regions = MiliRegionLoadMonitor.getDisplayData();
+        if (regions.isEmpty()) {
             stack.getSender().sendMessage(Component.text("  还没有收集到样本 (需要等待 " + MiliRegionLoadMonitor.sampleIntervalTicks + " ticks)")
                     .color(NamedTextColor.YELLOW));
             return;
         }
-        for (String line : summary.split("\n")) {
-            stack.getSender().sendMessage(Component.text(line).color(NamedTextColor.WHITE));
+
+        // Table header
+        stack.getSender().sendMessage(
+                Component.text("  等级   ").color(NamedTextColor.GRAY)
+                        .append(Component.text("#ID  ").color(NamedTextColor.DARK_GRAY))
+                        .append(Component.text("维度                    ").color(NamedTextColor.GRAY))
+                        .append(Component.text("区块   实体  玩家  EMA负载").color(NamedTextColor.GRAY))
+        );
+
+        int shown = 0;
+        for (RegionDisplayData d : regions) {
+            // Skip fully idle regions for cleaner display
+            if ("IDLE".equals(d.loadTag()) && d.entityCount() == 0 && d.chunkCount() == 0) {
+                continue;
+            }
+            if (shown >= 15) break;
+
+            NamedTextColor loadColor = switch (d.loadTag()) {
+                case "CRIT" -> NamedTextColor.RED;
+                case "HIGH" -> NamedTextColor.GOLD;
+                case "MED" -> NamedTextColor.YELLOW;
+                case "LOW" -> NamedTextColor.GREEN;
+                default -> NamedTextColor.DARK_GRAY;
+            };
+
+            // Hover tooltip with detailed stats
+            Component hover = buildRegionHover(d);
+
+            Component line = Component.text("  ")
+                    .append(Component.text(d.loadTag()).color(loadColor))
+                    .append(Component.text("  #" + d.regionId() + " ").color(NamedTextColor.DARK_GRAY))
+                    .append(Component.text(pad(d.levelName(), 22)).color(NamedTextColor.AQUA))
+                    .append(Component.text(pad(String.valueOf(d.chunkCount()), 6)).color(NamedTextColor.WHITE))
+                    .append(Component.text(pad(String.valueOf(d.entityCount()), 5)).color(NamedTextColor.WHITE))
+                    .append(Component.text(pad(String.valueOf(d.playerCount()), 5)).color(NamedTextColor.WHITE))
+                    .append(Component.text(F1.format(d.emaLoadScore())).color(loadColor))
+                    .hoverEvent(HoverEvent.showText(hover));
+
+            if (d.consecutiveSlow() >= MiliRegionLoadMonitor.slowRegionConsecutive) {
+                line = line.append(Component.text(" ⚠").color(NamedTextColor.RED));
+            }
+
+            stack.getSender().sendMessage(line);
+            shown++;
         }
+        if (shown == 0) {
+            stack.getSender().sendMessage(Component.text("  所有区域处于空闲状态").color(NamedTextColor.DARK_GRAY));
+        }
+    }
+
+    private static Component buildRegionHover(RegionDisplayData d) {
+        Component.Builder hover = Component.text()
+                .append(Component.text("区域 #" + d.regionId()).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
+                .append(Component.newline())
+                .append(Component.text("维度: ").color(NamedTextColor.GRAY))
+                .append(Component.text(d.levelName()).color(NamedTextColor.WHITE))
+                .append(Component.newline())
+                .append(Component.text("━━━━━━━━━━━━━━━━").color(NamedTextColor.DARK_GRAY))
+                .append(Component.newline())
+                .append(Component.text("区块: ").color(NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(d.chunkCount())).color(NamedTextColor.WHITE))
+                .append(Component.text("  实体: ").color(NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(d.entityCount())).color(NamedTextColor.WHITE))
+                .append(Component.text("  玩家: ").color(NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(d.playerCount())).color(NamedTextColor.WHITE))
+                .append(Component.newline())
+                .append(Component.text("━━━━━━━━━━━━━━━━").color(NamedTextColor.DARK_GRAY))
+                .append(Component.newline())
+                .append(Component.text("EMA 负载: ").color(NamedTextColor.GRAY))
+                .append(Component.text(F1.format(d.emaLoadScore())).color(NamedTextColor.WHITE))
+                .append(Component.text("  峰值: ").color(NamedTextColor.GRAY))
+                .append(Component.text(F1.format(d.peakLoadScore())).color(NamedTextColor.WHITE));
+
+        if (d.lastMspt() >= 0) {
+            hover.append(Component.newline())
+                    .append(Component.text("MSPT: ").color(NamedTextColor.GRAY))
+                    .append(Component.text(F2.format(d.lastMspt()) + " ms").color(msptColor(d.lastMspt())))
+                    .append(Component.text("  均值: ").color(NamedTextColor.GRAY))
+                    .append(Component.text(F2.format(d.emaMspt()) + " ms").color(NamedTextColor.WHITE))
+                    .append(Component.text("  峰值: ").color(NamedTextColor.GRAY))
+                    .append(Component.text(F2.format(d.peakMspt()) + " ms").color(NamedTextColor.RED));
+        }
+        if (d.lastTps() >= 0) {
+            hover.append(Component.newline())
+                    .append(Component.text("TPS: ").color(NamedTextColor.GRAY))
+                    .append(Component.text(F2.format(d.lastTps())).color(tpsColor(d.lastTps())));
+        }
+
+        hover.append(Component.newline())
+                .append(Component.text("采样数: ").color(NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(d.samplesTaken())).color(NamedTextColor.DARK_GRAY));
+
+        if (d.consecutiveSlow() >= MiliRegionLoadMonitor.slowRegionConsecutive) {
+            hover.append(Component.newline())
+                    .append(Component.text("⚠ 持续慢区域 (" + d.consecutiveSlow() + " 连续样本)").color(NamedTextColor.RED));
+        }
+
+        return hover.build();
+    }
+
+    private static String pad(String s, int width) {
+        if (s.length() >= width) return s.substring(0, width);
+        return s + " ".repeat(width - s.length());
+    }
+
+    private static NamedTextColor tpsColor(double tps) {
+        if (tps >= 19.5) return NamedTextColor.GREEN;
+        if (tps >= 18.0) return NamedTextColor.YELLOW;
+        if (tps >= 15.0) return NamedTextColor.GOLD;
+        return NamedTextColor.RED;
+    }
+
+    private static NamedTextColor msptColor(double mspt) {
+        if (mspt <= 25.0) return NamedTextColor.GREEN;
+        if (mspt <= 40.0) return NamedTextColor.YELLOW;
+        if (mspt <= 50.0) return NamedTextColor.GOLD;
+        return NamedTextColor.RED;
     }
 
     private void sendProfiler(CommandSourceStack stack) {
