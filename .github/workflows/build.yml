@@ -67,12 +67,10 @@ jobs:
         run: |
           echo "=== Pre-clean state ==="
           ls -la .gradle/caches/paperweight 2>/dev/null || echo "no paperweight cache yet"
-          # Remove EVERYTHING that could carry stale patch state
           rm -rf .gradle/caches/paperweight
           rm -rf lophine-server/.gradle/caches/paperweight
           rm -rf lophine-api/.gradle/caches/paperweight
           rm -rf lophine-server/build lophine-api/build
-          # Belt-and-suspenders: search-and-destroy taskCache wherever it hides
           find . -type d -name "taskCache" -path "*/paperweight/*" -exec rm -rf {} + 2>/dev/null || true
           echo "=== Post-clean state ==="
           ls -la .gradle/caches/paperweight 2>/dev/null || echo "paperweight cache removed"
@@ -122,7 +120,7 @@ jobs:
       - name: Check If Branch In Expectations
         if: github.event_name != 'pull_request' && env.flag_release == 'true'
         run: |
-          if [[ "$GITHUB_REF_NAME" == ver/* ]] || [[ "$GITHUB_REF_NAME" == exp/* ]] || [[ "$GITHUB_REF_NAME" == dev/* ]]; then
+          if [[ "$GITHUB_REF_NAME" == ver/* ]] || [[ "$GITHUB_REF_NAME" == exp/* ]] || [[ "$GITHUB_REF_NAME" == dev/* ]] || [[ "$GITHUB_REF_NAME" == master ]]; then
             echo "Branch is in expected prefixes"
             echo "unexpect=false" >> $GITHUB_ENV
           else
