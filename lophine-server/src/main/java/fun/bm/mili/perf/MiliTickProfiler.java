@@ -18,25 +18,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * mili - Lightweight, zero-allocation tick hotspot detector.
+ * mili - 轻量级无分配 tick 热点探查器 / Lightweight, zero-allocation tick hotspot detector.
  *
- * <p>Wraps a {@code Runnable} to measure wall-clock time and increment
- * a per-label counter. Designed to be cheap enough to leave on in
- * production: ~50ns per enter/exit pair (LongAdder + System.nanoTime).
+ * <p>包装 Runnable 以测量墙钟时间 / Wraps a Runnable to measure wall-clock time.
+ * 设计为足够廉价以在生产环境开启 / Designed to be cheap enough for production: ~50ns/sample.
  *
- * <p>Unlike full async-profiler, this only times labels YOU mark. It
- * won't profile the entire codebase, but it will highlight which
- * custom Lophine code path consumes the most tick time.
+ * <p>与全量 async-profiler 不同，仅计时你标记的标签 / Unlike async-profiler, only times
+ * labels YOU mark。用于识别哪些自定义代码路径消耗最多 tick 时间 / Identify which custom
+ * Lophine code paths consume the most tick time.
  *
- * <p>Usage:
+ * <p>用法 / Usage:
  * <pre>
  *   try (MiliTickProfiler.Sample s = MiliTickProfiler.start("hopper-merge")) {
  *       // ...work...
  *   }
  * </pre>
  *
- * <p>Aggregated stats can be dumped via /lophine-perf (planned) or by
- * reading {@link #dumpStats()} from a console.
+ * <p>通过 /lophine-perf profiler 或 dumpStats() 查看聚合统计 / Aggregated stats via
+ * /lophine-perf profiler or dumpStats().
  */
 @ConfigClassInfo(category = EnumConfigCategory.OPTIMIZATIONS, name = "lophine_tick_profiler")
 public class MiliTickProfiler implements IConfigModule {
@@ -65,10 +64,9 @@ public class MiliTickProfiler implements IConfigModule {
     private static final AtomicLong LAST_LOG_NANOS = new AtomicLong(0L);
 
     /**
-     * Open a new sample. Returns a {@link Sample} that records elapsed
-     * nanoseconds into the named bucket when closed. {@code name} should
-     * be a short, stable, intern-able string (e.g. "bot-tick",
-     * "region-guard", "tps-read").
+     * 开启新采样 / Open a new sample.
+     * 返回 {@link Sample} 在关闭时将纳秒耗时记录到命名桶 / Returns a Sample that records
+     * elapsed nanoseconds into the named bucket when closed.
      */
     public static Sample start(String name) {
         if (!enabled) {
@@ -78,8 +76,8 @@ public class MiliTickProfiler implements IConfigModule {
     }
 
     /**
-     * Record a single measurement. Useful when the work fits a single
-     * line, e.g. {@code MiliTickProfiler.record("foo", elapsedNanos)}.
+     * 记录单次测量 / Record a single measurement.
+     * 适用于单行代码 / Useful when the work fits a single line.
      */
     public static void record(String name, long elapsedNanos) {
         if (!enabled) {
@@ -98,8 +96,8 @@ public class MiliTickProfiler implements IConfigModule {
     }
 
     /**
-     * Returns a multi-line stats summary. Call from a command or log
-     * handler to see which Lophine paths dominate tick time.
+     * 返回多行统计摘要 / Returns a multi-line stats summary.
+     * 从命令或日志处理器调用 / Call from a command or log handler.
      */
     public static String dumpStats() {
         if (STATS.isEmpty()) {
@@ -123,8 +121,8 @@ public class MiliTickProfiler implements IConfigModule {
     }
 
     /**
-     * Called periodically to emit a summary log. Rate-limited by
-     * {@link #logEverySeconds}. Safe to call from any thread.
+     * 定期发出摘要日志 (按频率限制) / Called periodically to emit summary log (rate-limited).
+     * 任意线程安全 / Safe to call from any thread.
      */
     public static void maybeLogSummary() {
         if (!enabled || logEverySeconds <= 0) {
@@ -158,7 +156,8 @@ public class MiliTickProfiler implements IConfigModule {
     }
 
     /**
-     * AutoCloseable sample handle. Use try-with-resources to ensure
+     * AutoCloseable 采样句柄 / AutoCloseable sample handle.
+     * 使用 try-with-resources 确保异常时也能完成测量 / Use try-with-resources to ensure
      * measurement completes even on exception.
      */
     public static class Sample implements AutoCloseable {

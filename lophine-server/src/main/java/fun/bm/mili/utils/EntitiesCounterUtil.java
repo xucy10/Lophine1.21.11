@@ -45,7 +45,7 @@ public class EntitiesCounterUtil {
     // mili - perf: cache version based on global loaded entities' reference identity hash
     private static final Map<ServerLevel, Integer> cacheVersion = new ConcurrentHashMap<>();
 
-    private static int lastUsedId = 0;
+    // mili - 已迁移到 lastUsedIdAtomic / migrated to lastUsedIdAtomic
 
     // mili - perf: dedicated single-thread executor to avoid competing with ForkJoinPool common pool
     private static final ExecutorService COUNTER_EXECUTOR = Executors.newSingleThreadExecutor(r -> {
@@ -55,17 +55,29 @@ public class EntitiesCounterUtil {
         return t;
     });
 
-    private static final int CLEANUP_INTERVAL = 200; // each 200 ids used
+    // mili - 使用 AtomicInteger 实现溢出安全的 ID 生成器
+    // mili - Overflow-safe ID generator using AtomicInteger
+    private static final java.util.concurrent.atomic.AtomicInteger lastUsedIdAtomic = new java.util.concurrent.atomic.AtomicInteger(1);
+    private static final int CLEANUP_INTERVAL = 200; // 每 200 次 ID 生成触发一次清理 / cleanup every 200 IDs
 
+    /**
+     * 生成唯一 ID，溢出安全 / Generate unique ID, overflow-safe.
+     * 使用 CAS 循环确保唯一性，溢出后回绕到 1 / Uses CAS loop for uniqueness, wraps to 1 on overflow.
+     */
     public static int generateUniqueId() {
         synchronized (UniqueIds) {
-            if (lastUsedId % CLEANUP_INTERVAL == 0) runCleanUp();
-            int id = lastUsedId;
-            while (UniqueIds.contains(id)) {
-                id++;
-            }
+            int id;
+            do {
+                id = lastUsedIdAtomic.incrementAndGet();
+                // 溢出到负数或零时回绕 / Wrap around on overflow to negative or zero
+                if (id <= 0) {
+                    lastUsedIdAtomic.compareAndSet(id, 1);
+                }
+            } while (id <= 0 || UniqueIds.contains(id));
 
-            lastUsedId = id;
+            // 周期性清理不再使用的 ID / Periodic cleanup of unused IDs
+            if (id % CLEANUP_INTERVAL == 0) runCleanUp();
+
             UniqueIds.add(id);
             return id;
         }

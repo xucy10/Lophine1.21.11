@@ -46,9 +46,12 @@ public class ServerI18nUtil {
     private static final String defaultLophineLangPath = "/assets/lophine/lang/en_us.json";
     private static final String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     private static final String resourceBaseUrl = "https://resources.download.minecraft.net/";
-    // pre-load
+    // 复用 HttpClient 实例，避免每次请求创建新连接池 / Reuse HttpClient instance to avoid creating new connection pools per request
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+    // 预加载任务 / Pre-load task
     private static CompletableFuture<Void> preloadTask;
-    // paths
     private static String langPath;
     private static String assetsPath;
     private static String versionPath;
@@ -191,14 +194,11 @@ public class ServerI18nUtil {
 
     private static byte[] fetch(String urlString) throws IOException, InterruptedException {
         try {
-            HttpResponse<String> response;
-            try (HttpClient httpClient = HttpClient.newHttpClient()) {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(urlString))
-                        .timeout(Duration.ofSeconds(10))
-                        .build();
-                response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            }
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlString))
+                    .timeout(Duration.ofSeconds(10))
+                    .build();
+            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
             int responseCode = response.statusCode();
             if (responseCode != 200) {

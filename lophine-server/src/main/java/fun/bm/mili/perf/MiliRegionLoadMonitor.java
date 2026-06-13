@@ -24,26 +24,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * mili - Region load monitor and balance advisor.
+ * mili - 区域负载监控与均衡顾问 / Region load monitor and balance advisor.
  *
- * <p>Periodically samples the work done by each tick region. If a region
- * is consistently the slowest (e.g. by MSPT or chunk count), this
- * monitor surfaces a warning in the log. Operators can use these
- * warnings to:
+ * <p>定期采样每个 tick 区域的工作负载 / Periodically samples the work done by each tick region.
+ * 当某个区域持续最慢时发出警告 / If a region is consistently the slowest, surfaces a warning.
+ * 运维人员可据此 / Operators can use these warnings to:
  * <ul>
- *   <li>Manually split a region (e.g. by teleporting load to a new
- *       location).</li>
- *   <li>Increase tick thread count.</li>
- *   <li>Reduce entity counts in the hot region.</li>
+ *   <li>手动拆分区域 (将负载传送到新位置) / Manually split a region</li>
+ *   <li>增加 tick 线程数 / Increase tick thread count</li>
+ *   <li>减少热点区域的实体数 / Reduce entity counts in the hot region</li>
  * </ul>
  *
- * <p>The monitor runs on the global region thread (every 100 ticks by
- * default) so it cannot deadlock or interfere with region ticks. All
- * sample storage is per-region-id and uses lock-free atomic snapshots.
+ * <p>监控在全局区域线程上运行 (默认每 100 tick) / The monitor runs on the global region thread
+ * (every 100 ticks by default)，不会死锁或干扰区域 tick / so it cannot deadlock.
+ * 所有采样存储使用无锁原子快照 / All sample storage uses lock-free atomic snapshots.
  *
- * <p>Why not auto-split? Region splits are expensive (block re-routing,
- * entity transfer) and triggered automatically by Folia when load drops
- * to zero. A misjudged split can thrash. We surface data, not decisions.
+ * <p>为什么不自动拆分? / Why not auto-split? 区域拆分开销大 / Region splits are expensive.
+ * Folia 在负载降到零时自动触发 / Folia auto-triggers when load drops to zero.
+ * 我们只提供数据，不做决策 / We surface data, not decisions.
  */
 @ConfigClassInfo(category = EnumConfigCategory.OPTIMIZATIONS, name = "lophine_region_load_monitor")
 public class MiliRegionLoadMonitor implements IConfigModule {
@@ -97,9 +95,8 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     private static final AtomicReference<String> LAST_SUMMARY = new AtomicReference<>("");
 
     /**
-     * Called by patched code (or by the global region scheduler) once per
-     * sample interval. Cheap O(N) over all regions in all levels. Safe
-     * to call from any thread - uses lock-free atomics.
+     * 采样入口 (由全局区域调度器或 patched 代码调用) / Sample entry point.
+     * 全级别 O(N) 遍历，任意线程安全调用 / Cheap O(N) over all regions, safe from any thread.
      */
     public static void onSampleTick() {
         if (!enabled) {
@@ -194,9 +191,8 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     }
 
     /**
-     * Emit a summary log of all currently-tracked regions. Idempotent and
-     * rate-limited by {@link #logSummaryEverySeconds}. Safe to call from
-     * any context (used by /lophine-perf command if added).
+     * 发出摘要日志 (幂等、按频率限制) / Emit summary log (idempotent, rate-limited).
+     * 任意上下文安全调用 / Safe to call from any context.
      */
     public static void maybeLogSummary() {
         if (!enabled || logSummaryEverySeconds <= 0) {
@@ -285,8 +281,8 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     }
 
     /**
-     * Returns structured region data for Adventure component display.
-     * Each entry is a snapshot suitable for rendering in-game.
+     * 返回结构化区域数据供 Adventure 组件显示 / Returns structured region data for Adventure display.
+     * 每项为快照，适用于游戏内渲染 / Each entry is a snapshot for in-game rendering.
      */
     public static List<RegionDisplayData> getDisplayData() {
         List<RegionDisplayData> result = new ArrayList<>();
@@ -307,7 +303,7 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     }
 
     /**
-     * Snapshot of a single region's data for Adventure component rendering.
+     * 单个区域的数据快照 (供 Adventure 组件渲染) / Snapshot of a single region's data.
      */
     public record RegionDisplayData(
             long regionId,
@@ -338,8 +334,7 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     }
 
     /**
-     * Periodic cleanup of samples for regions that have been destroyed
-     * (split/merged). Called from maybeLogSummary so it is bounded.
+     * 定期清理已销毁区域的采样 (Folia 拆分/合并) / Cleanup samples for destroyed regions.
      */
     public static void gcDestroyedRegions(long olderThanNanos) {
         long threshold = System.nanoTime() - olderThanNanos;
@@ -358,8 +353,8 @@ public class MiliRegionLoadMonitor implements IConfigModule {
     }
 
     /**
-     * Mutable per-region sample. Stored in a ConcurrentHashMap keyed by
-     * TickRegionData.id (which is stable for the region's lifetime).
+     * 可变区域采样 / Mutable per-region sample.
+     * 存储在 ConcurrentHashMap 中，键为 TickRegionData.id / Keyed by TickRegionData.id.
      */
     private static final class RegionSample {
         volatile String levelName = "unknown";

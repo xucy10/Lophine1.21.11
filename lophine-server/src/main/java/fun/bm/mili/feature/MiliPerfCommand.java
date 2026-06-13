@@ -20,28 +20,21 @@ import java.util.BitSet;
 import java.util.List;
 
 /**
- * mili - /lophine-perf command.
+ * mili - /lophine-perf 性能命令 / Performance diagnostics command.
  *
- * <p>Subcommands:
+ * <p>子命令 / Subcommands:
  * <ul>
- *   <li>{@code /lophine-perf status} - shows current settings for all
- *       Lophine performance modules.</li>
- *   <li>{@code /lophine-perf affinity} - shows the resolved CPU
- *       affinity bitset that tick threads are pinned to, plus the
- *       bitmask of the current thread (so you can confirm pinning is
- *       active).</li>
- *   <li>{@code /lophine-perf regions} - dumps the latest region load
- *       monitor summary (top 20 regions by EMA load score).</li>
- *   <li>{@code /lophine-perf profiler} - dumps the current tick
- *       profiler statistics, sorted by total elapsed time.</li>
- *   <li>{@code /lophine-perf deadlock-stats} - shows in-flight region
- *       ticks and total deadlock warnings emitted by the safety
- *       guard.</li>
+ *   <li>{@code /lophine-perf status} - 显示所有性能模块状态 / Show all perf module settings</li>
+ *   <li>{@code /lophine-perf affinity} - CPU 亲和性状态 / CPU affinity status</li>
+ *   <li>{@code /lophine-perf regions} - 区域负载摘要 (前 20 区域) / Region load summary (top 20)</li>
+ *   <li>{@code /lophine-perf profiler} - Tick 探查器统计 / Tick profiler statistics</li>
+ *   <li>{@code /lophine-perf deadlock-stats} - 死锁/慢 tick 警告 / Deadlock/slow tick warnings</li>
  * </ul>
  *
- * <p>Aliases: {@code /lperf}, {@code /lophineperf}.
+ * <p>别名 / Aliases: {@code /lperf}, {@code /lophineperf}.
  */
 public class MiliPerfCommand extends RootNode {
+    // DecimalFormat 非线程安全，使用 ThreadLocal 避免并发区域线程冲突
     // DecimalFormat is NOT thread-safe; use ThreadLocal for concurrent region threads
     private static final ThreadLocal<DecimalFormat> F1 = ThreadLocal.withInitial(() -> new DecimalFormat("#,##0.0"));
     private static final ThreadLocal<DecimalFormat> F2 = ThreadLocal.withInitial(() -> new DecimalFormat("#,##0.00"));
@@ -173,6 +166,7 @@ public class MiliPerfCommand extends RootNode {
         }
     }
 
+    /** 构建区域悬停提示组件 / Build region hover tooltip component. */
     private static Component buildRegionHover(RegionDisplayData d) {
         TextComponent.Builder hover = Component.text()
                 .append(Component.text("区域 #" + d.regionId()).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
@@ -223,11 +217,13 @@ public class MiliPerfCommand extends RootNode {
         return hover.build();
     }
 
+    /** 字符串右填充空格 / Right-pad string with spaces. */
     private static String pad(String s, int width) {
         if (s.length() >= width) return s.substring(0, width);
         return s + " ".repeat(width - s.length());
     }
 
+    /** TPS 颜色映射 / TPS color mapping. */
     private static NamedTextColor tpsColor(double tps) {
         if (tps >= 19.5) return NamedTextColor.GREEN;
         if (tps >= 18.0) return NamedTextColor.YELLOW;
@@ -235,6 +231,7 @@ public class MiliPerfCommand extends RootNode {
         return NamedTextColor.RED;
     }
 
+    /** MSPT 颜色映射 / MSPT color mapping. */
     private static NamedTextColor msptColor(double mspt) {
         if (mspt <= 25.0) return NamedTextColor.GREEN;
         if (mspt <= 40.0) return NamedTextColor.YELLOW;
