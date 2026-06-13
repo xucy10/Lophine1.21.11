@@ -19,10 +19,10 @@ Folia compatibility: This version uses volatile fields to ensure thread-safe
 access to equipment tracking state across region boundaries.
 
 diff --git a/net/minecraft/world/entity/EntityEquipment.java b/net/minecraft/world/entity/EntityEquipment.java
-index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f641597ce80465 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/EntityEquipment.java
 +++ b/net/minecraft/world/entity/EntityEquipment.java
-@@ -7,7 +7,7 @@ import java.util.Objects;
+@@ -7,32 +7,32 @@ import java.util.Objects;
  import java.util.Map.Entry;
  import net.minecraft.world.item.ItemStack;
  
@@ -31,7 +31,7 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
      public static final Codec<EntityEquipment> CODEC = Codec.unboundedMap(EquipmentSlot.CODEC, ItemStack.CODEC).xmap(map -> {
          EnumMap<EquipmentSlot, ItemStack> map1 = new EnumMap<>(EquipmentSlot.class);
          map1.putAll((Map<? extends EquipmentSlot, ? extends ItemStack>)map);
-@@ -18,6 +18,11 @@ public class EntityEquipment {
+@@ -18,31 +18,36 @@ public class EntityEquipment {
          return map;
      });
      private final EnumMap<EquipmentSlot, ItemStack> items;
@@ -43,7 +43,7 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
  
      private EntityEquipment(EnumMap<EquipmentSlot, ItemStack> items) {
          this.items = items;
-@@ -28,7 +33,13 @@ public class EntityEquipment {
+@@ -28,32 +33,38 @@ public class EntityEquipment {
      }
  
      public ItemStack set(EquipmentSlot slot, ItemStack stack) {
@@ -58,7 +58,7 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
      }
  
      public ItemStack get(EquipmentSlot slot) {
-@@ -55,8 +66,23 @@ public class EntityEquipment {
+@@ -55,33 +66,48 @@ public class EntityEquipment {
      }
  
      public void setAll(EntityEquipment equipment) {
@@ -82,7 +82,7 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
      }
  
      public void dropAll(LivingEntity entity) {
-@@ -69,6 +95,7 @@ public class EntityEquipment {
+@@ -69,31 +95,32 @@ public class EntityEquipment {
  
      public void clear() {
          this.items.replaceAll((equipmentSlot, itemStack) -> ItemStack.EMPTY);
@@ -90,7 +90,7 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
      }
  
      // Paper start - EntityDeathEvent
-@@ -77,4 +104,98 @@ public class EntityEquipment {
+@@ -77,29 +104,123 @@ public class EntityEquipment {
          return this.items.containsKey(slot);
      }
      // Paper end - EntityDeathEvent
@@ -190,10 +190,10 @@ index 1e00a7bd89d885cabb4b9ca3c86fbd8cd93cebf5..4fb31f578c2a4a5dc137c38de8f64159
 +    // Mili end - lithium: equipment_tracking (Folia compatible)
  }
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 18b3b24d1afca04748b3c37399cdc33c67b233d1..35f490997573c2d00c375a0ff17ae5df38ecfb22 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -442,9 +442,17 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -442,34 +442,42 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
              this.getSleepingPos().ifPresent(this::setPosToBed);
          }
  
@@ -213,7 +213,7 @@ index 18b3b24d1afca04748b3c37399cdc33c67b233d1..35f490997573c2d00c375a0ff17ae5df
  
          super.baseTick();
          ProfilerFiller profilerFiller = Profiler.get();
-@@ -3607,6 +3615,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -3607,31 +3615,32 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      public void detectEquipmentUpdates() {
          Map<EquipmentSlot, ItemStack> map = this.collectEquipmentChanges();
          if (map != null) {
@@ -221,7 +221,7 @@ index 18b3b24d1afca04748b3c37399cdc33c67b233d1..35f490997573c2d00c375a0ff17ae5df
              this.handleHandSwap(map);
              if (!map.isEmpty()) {
                  this.handleEquipmentChanges(map);
-@@ -3615,6 +3624,14 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -3615,31 +3624,39 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      }
  
      private @Nullable Map<EquipmentSlot, ItemStack> collectEquipmentChanges() {
@@ -237,10 +237,10 @@ index 18b3b24d1afca04748b3c37399cdc33c67b233d1..35f490997573c2d00c375a0ff17ae5df
          // Paper start - EntityEquipmentChangedEvent
          record EquipmentChangeImpl(org.bukkit.inventory.ItemStack oldItem, org.bukkit.inventory.ItemStack newItem) implements io.papermc.paper.event.entity.EntityEquipmentChangedEvent.EquipmentChange {
 diff --git a/net/minecraft/world/entity/decoration/ArmorStand.java b/net/minecraft/world/entity/decoration/ArmorStand.java
-index ae18b3a78075a72c927b7362bed18d4ec3dc2360..2bf4b7d9be2deb43b14bb907c2341ad1407f5dd0 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -529,8 +529,9 @@ public class ArmorStand extends LivingEntity {
+@@ -529,33 +529,34 @@ public class ArmorStand extends LivingEntity {
          maxUpStep = level().purpurConfig.armorstandStepHeight; // Purpur - Add option to set armorstand step height
          if (!this.canTick) {
              if (this.noTickEquipmentDirty) {

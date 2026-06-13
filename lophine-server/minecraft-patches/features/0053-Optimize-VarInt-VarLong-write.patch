@@ -10,10 +10,10 @@ As part of: Velocity (https://github.com/PaperMC/Velocity)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/net/minecraft/network/VarInt.java b/net/minecraft/network/VarInt.java
-index 7a1cafc3fb56054a72591bfb446a433f959a6b28..9bbec7288734899d0b08d0ef2061f0d3c6f265be 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/network/VarInt.java
 +++ b/net/minecraft/network/VarInt.java
-@@ -50,28 +50,45 @@ public class VarInt {
+@@ -50,43 +50,60 @@ public class VarInt {
          return i;
      }
  
@@ -80,10 +80,10 @@ index 7a1cafc3fb56054a72591bfb446a433f959a6b28..9bbec7288734899d0b08d0ef2061f0d3
 +    // Mili end - Optimize VarInt
  }
 diff --git a/net/minecraft/network/VarLong.java b/net/minecraft/network/VarLong.java
-index df9a85b19a9767c85f02837af6835f7ddb6c7dc3..77f090bc1b9225dd5a61d8c57c902fcdea8ed7cd 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/network/VarLong.java
 +++ b/net/minecraft/network/VarLong.java
-@@ -38,13 +38,122 @@ public class VarLong {
+@@ -38,28 +38,137 @@ public class VarLong {
          return l;
      }
  

@@ -11,10 +11,10 @@ As part of: C2ME-fabric (https://github.com/RelativityMC/C2ME-fabric)
 Licensed under: MIT
 
 diff --git a/net/minecraft/world/level/ChunkPos.java b/net/minecraft/world/level/ChunkPos.java
-index de7c262f65557f149e00059c7df85917c9ca4342..6831866429ad9b5f5ca1e9191a9ee3ba3a4b355d 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/ChunkPos.java
 +++ b/net/minecraft/world/level/ChunkPos.java
-@@ -119,7 +119,12 @@ public class ChunkPos {
+@@ -119,22 +119,27 @@ public class ChunkPos {
  
      @Override
      public boolean equals(Object other) {
@@ -29,10 +29,10 @@ index de7c262f65557f149e00059c7df85917c9ca4342..6831866429ad9b5f5ca1e9191a9ee3ba
  
      public int getMiddleBlockX() {
 diff --git a/net/minecraft/world/level/levelgen/Beardifier.java b/net/minecraft/world/level/levelgen/Beardifier.java
-index b87fad848fa4342dc420a186a762cc826e9c0294..3e8b852fe7630677f0497e36a176787a9400d5d6 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/levelgen/Beardifier.java
 +++ b/net/minecraft/world/level/levelgen/Beardifier.java
-@@ -167,8 +167,14 @@ public class Beardifier implements DensityFunctions.BeardifierOrMarker {
+@@ -167,23 +167,29 @@ public class Beardifier implements DensityFunctions.BeardifierOrMarker {
      }
  
      private static double getBuryContribution(double x, double y, double z) {
@@ -50,10 +50,10 @@ index b87fad848fa4342dc420a186a762cc826e9c0294..3e8b852fe7630677f0497e36a176787a
  
      private static double getBeardContribution(int x, int y, int z, int height) {
 diff --git a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-index d1068a122e5dbd5af274d0f8178ca9f5fa49f930..2e02ba3d101eb41b486da7622ada14e330e70dbd 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
 +++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-@@ -75,7 +75,10 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
+@@ -75,22 +75,25 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
              if (SharedConstants.DEBUG_DISABLE_FLUID_GENERATION) {
                  return fluidStatus2;
              } else {

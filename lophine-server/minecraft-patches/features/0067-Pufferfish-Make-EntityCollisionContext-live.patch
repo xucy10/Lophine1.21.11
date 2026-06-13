@@ -10,10 +10,10 @@ As part of: Airplane (https://github.com/TECHNOVE/Airplane)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/net/minecraft/world/phys/shapes/EntityCollisionContext.java b/net/minecraft/world/phys/shapes/EntityCollisionContext.java
-index 98787a3e5366c4964db278785fbbd578373be991..0a0f2b451ed2a82a699df0b0273945cfffaae295 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/phys/shapes/EntityCollisionContext.java
 +++ b/net/minecraft/world/phys/shapes/EntityCollisionContext.java
-@@ -12,39 +12,34 @@ import net.minecraft.world.level.material.FluidState;
+@@ -12,54 +12,49 @@ import net.minecraft.world.level.material.FluidState;
  import org.jspecify.annotations.Nullable;
  
  public class EntityCollisionContext implements CollisionContext {
@@ -63,7 +63,7 @@ index 98787a3e5366c4964db278785fbbd578373be991..0a0f2b451ed2a82a699df0b0273945cf
      }
  
      @Override
-@@ -64,12 +59,12 @@ public class EntityCollisionContext implements CollisionContext {
+@@ -64,27 +59,27 @@ public class EntityCollisionContext implements CollisionContext {
  
      @Override
      public boolean isDescending() {

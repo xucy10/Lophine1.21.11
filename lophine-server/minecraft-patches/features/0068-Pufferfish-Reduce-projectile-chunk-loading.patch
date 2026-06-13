@@ -12,10 +12,10 @@ Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Folia compatibility: Uses region-safe chunk loading checks.
 
 diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
-index 36479ed544ce812113c9a9c982a74a950cb9b26a..c3e6a30931389b14004fa8cb58c63b1755e9ccae 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -50,6 +50,54 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -50,21 +50,69 @@ public abstract class Projectile extends Entity implements TraceableEntity {
          super(type, level);
      }
  

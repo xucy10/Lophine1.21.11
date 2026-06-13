@@ -6,10 +6,10 @@ Subject: [PATCH] Command block parse results caching
 Folia compatibility: Command blocks are regionized, so caching is per-block.
 
 diff --git a/net/minecraft/world/level/BaseCommandBlock.java b/net/minecraft/world/level/BaseCommandBlock.java
-index 183ad542a6589071a37f1036b9bbe7dd141f7ed8..7d7d47c20779327f9e5a6caae2e17da65140acc4 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/BaseCommandBlock.java
 +++ b/net/minecraft/world/level/BaseCommandBlock.java
-@@ -30,6 +30,10 @@ public abstract class BaseCommandBlock {
+@@ -30,21 +30,25 @@ public abstract class BaseCommandBlock {
      @Nullable Component lastOutput;
      private String command = "";
      private @Nullable Component customName;
@@ -20,7 +20,7 @@ index 183ad542a6589071a37f1036b9bbe7dd141f7ed8..7d7d47c20779327f9e5a6caae2e17da6
      // CraftBukkit start
      protected abstract org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper);
      public abstract ServerLevel getLevel();
-@@ -110,13 +114,41 @@ public abstract class BaseCommandBlock {
+@@ -110,28 +114,56 @@ public abstract class BaseCommandBlock {
                                  this.successCount++;
                              }
                          });
@@ -66,7 +66,7 @@ index 183ad542a6589071a37f1036b9bbe7dd141f7ed8..7d7d47c20779327f9e5a6caae2e17da6
                      }
                  } catch (Throwable var7) {
                      CrashReport crashReport = CrashReport.forThrowable(var7, "Executing command block");
-@@ -137,6 +169,13 @@ public abstract class BaseCommandBlock {
+@@ -137,21 +169,28 @@ public abstract class BaseCommandBlock {
          }
      }
  

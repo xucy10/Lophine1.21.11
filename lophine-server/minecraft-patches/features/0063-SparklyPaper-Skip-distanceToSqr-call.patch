@@ -11,10 +11,10 @@ Patch description:
 The "distanceToSqr" call is a bit expensive, so avoiding it is pretty nice, around ~15% calls are skipped with this check
 
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index 3a817c92147bb78c60238f3ddc1644b721aed7a2..ec05269a2ec8b416582da8ff0c7da7ac83e4e8fa 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -197,23 +197,27 @@ public class ServerEntity {
+@@ -197,38 +197,42 @@ public class ServerEntity {
  
                  if (this.entity.needsSync || this.trackDelta || this.entity instanceof LivingEntity && ((LivingEntity)this.entity).isFallFlying()) {
                      Vec3 deltaMovement = this.entity.getDeltaMovement();

@@ -4,10 +4,10 @@ Date: Sat, 13 Jun 2026 17:10:00 +0800
 Subject: [PATCH] Use Java's Math functions
 
 diff --git a/net/minecraft/util/Mth.java b/net/minecraft/util/Mth.java
-index 50de03f9293939425feba058a0567ccae8bde09e..a5c4eb68f718769f088306ca8b098611d4ecdf4d 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/util/Mth.java
 +++ b/net/minecraft/util/Mth.java
-@@ -60,18 +60,15 @@ public class Mth {
+@@ -60,33 +60,30 @@ public class Mth {
      }
  
      public static int floor(float value) {
@@ -29,7 +29,7 @@ index 50de03f9293939425feba058a0567ccae8bde09e..a5c4eb68f718769f088306ca8b098611
      }
  
      public static float abs(float value) {
-@@ -83,13 +80,11 @@ public class Mth {
+@@ -83,28 +80,26 @@ public class Mth {
      }
  
      public static int ceil(float value) {

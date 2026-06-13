@@ -17,10 +17,10 @@ recipe, getting the output wool and getting the color from that.
 We use a prebaked list of all the possible colors and combinations instead.
 
 diff --git a/net/minecraft/world/item/DyeColor.java b/net/minecraft/world/item/DyeColor.java
-index f2e761f253969ca01b78c7ddc7a571ecc9655432..703c08e90fbde1cbd1272a864aa7960691a1ae2e 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/item/DyeColor.java
 +++ b/net/minecraft/world/item/DyeColor.java
-@@ -110,6 +110,15 @@ public enum DyeColor implements StringRepresentable {
+@@ -110,21 +110,30 @@ public enum DyeColor implements StringRepresentable {
      }
  
      public static DyeColor getMixedColor(ServerLevel level, DyeColor first, DyeColor second) {
@@ -36,7 +36,7 @@ index f2e761f253969ca01b78c7ddc7a571ecc9655432..703c08e90fbde1cbd1272a864aa79606
          CraftingInput craftingInput = makeCraftColorInput(first, second);
          return level.recipeAccess()
              .getRecipeFor(RecipeType.CRAFTING, craftingInput, level)
-@@ -130,4 +139,85 @@ public enum DyeColor implements StringRepresentable {
+@@ -130,19 +139,100 @@ public enum DyeColor implements StringRepresentable {
          return values()[random.nextInt(values().length)];
      }
      // Purpur end - Shulker spawn from bullet options

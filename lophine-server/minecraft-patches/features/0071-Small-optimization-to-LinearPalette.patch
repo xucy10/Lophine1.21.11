@@ -6,10 +6,10 @@ Subject: [PATCH] Small optimization to LinearPalette
 Folia compatibility: Uses volatile and synchronized for thread safety.
 
 diff --git a/net/minecraft/world/level/chunk/LinearPalette.java b/net/minecraft/world/level/chunk/LinearPalette.java
-index c93302f2457c71caae6f56c59d3a66357a0a6cd6..d37624464962f534ea6fe8672ad2157a40d2111c 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/chunk/LinearPalette.java
 +++ b/net/minecraft/world/level/chunk/LinearPalette.java
-@@ -10,7 +10,7 @@ import org.apache.commons.lang3.Validate;
+@@ -10,22 +10,22 @@ import org.apache.commons.lang3.Validate;
  public class LinearPalette<T> implements Palette<T>, ca.spottedleaf.moonrise.patches.fast_palette.FastPalette<T> { // Paper - optimise palette reads
      private final T[] values;
      private final int bits;
@@ -18,7 +18,7 @@ index c93302f2457c71caae6f56c59d3a66357a0a6cd6..d37624464962f534ea6fe8672ad2157a
  
      // Paper start - optimise palette reads
      @Override
-@@ -43,11 +43,16 @@ public class LinearPalette<T> implements Palette<T>, ca.spottedleaf.moonrise.pat
+@@ -43,26 +43,31 @@ public class LinearPalette<T> implements Palette<T>, ca.spottedleaf.moonrise.pat
  
      @Override
      public int idFor(T state, PaletteResize<T> resizeHandler) {
@@ -37,7 +37,7 @@ index c93302f2457c71caae6f56c59d3a66357a0a6cd6..d37624464962f534ea6fe8672ad2157a
  
          int ix = this.size;
          if (ix < this.values.length) {
-@@ -61,17 +66,23 @@ public class LinearPalette<T> implements Palette<T>, ca.spottedleaf.moonrise.pat
+@@ -61,32 +66,38 @@ public class LinearPalette<T> implements Palette<T>, ca.spottedleaf.moonrise.pat
  
      @Override
      public boolean maybeHas(Predicate<T> filter) {

@@ -13,10 +13,10 @@ the vanilla one, however this is far more advanced than what you need
 for all the vanilla recipes.
 
 diff --git a/net/minecraft/world/item/crafting/ShapelessRecipe.java b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-index 28d085fce206634ee88c492e06fdbf63a618ee12..33bf174d99e8f3ea80523301b22a31bb3b2d4219 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -22,13 +22,21 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -22,28 +22,36 @@ public class ShapelessRecipe implements CraftingRecipe {
      final ItemStack result;
      final List<Ingredient> ingredients;
      private @Nullable PlacementInfo placementInfo;
@@ -38,7 +38,7 @@ index 28d085fce206634ee88c492e06fdbf63a618ee12..33bf174d99e8f3ea80523301b22a31bb
  
      // CraftBukkit start
      @Override
-@@ -71,6 +79,27 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -71,21 +79,42 @@ public class ShapelessRecipe implements CraftingRecipe {
  
      @Override
      public boolean matches(CraftingInput input, Level level) {

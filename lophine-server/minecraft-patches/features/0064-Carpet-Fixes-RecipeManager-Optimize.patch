@@ -8,10 +8,10 @@ Optimized the RecipeManager getFirstMatch call to be up to 3x faster
 This is a fully vanilla optimization.
 
 diff --git a/net/minecraft/world/item/crafting/RecipeManager.java b/net/minecraft/world/item/crafting/RecipeManager.java
-index 4e0b0d630e18bde916a07889bcaf0e7accf064ca..e31ab0cb57794547f1122badb9e3e74fa57f16e1 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -167,7 +167,7 @@ public class RecipeManager extends SimplePreparableReloadListener<RecipeMap> imp
+@@ -167,22 +167,22 @@ public class RecipeManager extends SimplePreparableReloadListener<RecipeMap> imp
  
      public <I extends RecipeInput, T extends Recipe<I>> Optional<RecipeHolder<T>> getRecipeFor(RecipeType<T> recipeType, I input, Level level) {
          // CraftBukkit start
@@ -21,10 +21,10 @@ index 4e0b0d630e18bde916a07889bcaf0e7accf064ca..e31ab0cb57794547f1122badb9e3e74f
          // CraftBukkit end
      }
 diff --git a/net/minecraft/world/item/crafting/RecipeMap.java b/net/minecraft/world/item/crafting/RecipeMap.java
-index 23186a34bcb3ad2e5976f93cf0ff977a8d9a9721..52c1df3b110b5d8760b9d19ac6d8c96cc1248fe7 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/item/crafting/RecipeMap.java
 +++ b/net/minecraft/world/item/crafting/RecipeMap.java
-@@ -74,4 +74,24 @@ public class RecipeMap {
+@@ -74,19 +74,39 @@ public class RecipeMap {
      public <I extends RecipeInput, T extends Recipe<I>> Stream<RecipeHolder<T>> getRecipesFor(RecipeType<T> type, I input, Level level) {
          return input.isEmpty() ? Stream.empty() : this.byType(type).stream().filter(recipeHolder -> recipeHolder.value().matches(input, level));
      }

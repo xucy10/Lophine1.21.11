@@ -8,10 +8,10 @@ on the main thread, and is read-only afterward. This is safe for concurrent
 access from region threads.
 
 diff --git a/net/minecraft/server/level/ServerLevel.java b/net/minecraft/server/level/ServerLevel.java
-index 853bb92c034b6361ff8c55daf52f38a226fdae2c..1aaa8be699a5240ed6497e38a35593d7adeef03b 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -231,6 +231,7 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
+@@ -231,31 +231,32 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
      public boolean hasEntityMoveEvent; // Paper - Add EntityMoveEvent
      private final alternate.current.wire.WireHandler wireHandler = new alternate.current.wire.WireHandler(this); // Paper - optimize redstone (Alternate Current)
      public boolean hasRidableMoveEvent = false; // Purpur - Ridables
@@ -19,7 +19,7 @@ index 853bb92c034b6361ff8c55daf52f38a226fdae2c..1aaa8be699a5240ed6497e38a35593d7
  
      @Override
      public @Nullable LevelChunk getChunkIfLoaded(int x, int z) {
-@@ -730,6 +731,7 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
+@@ -730,31 +731,32 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
          // Paper end - rewrite chunk system
          this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
          this.preciseTime = this.serverLevelData.getDayTime(); // Purpur - Configurable daylight cycle
@@ -28,10 +28,10 @@ index 853bb92c034b6361ff8c55daf52f38a226fdae2c..1aaa8be699a5240ed6497e38a35593d7
  
      // Paper start
 diff --git a/net/minecraft/world/entity/raid/Raid.java b/net/minecraft/world/entity/raid/Raid.java
-index 0248808df911c8a63cbc5e3ae67e44760b0e1871..eaf3acb203ae58f4ef11585a44d4474b3bb27d9b 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -127,6 +127,7 @@ public class Raid {
+@@ -127,31 +127,32 @@ public class Raid {
      private Raid.RaidStatus status;
      private int celebrationTicks;
      private Optional<BlockPos> waveSpawnPos = Optional.empty();
@@ -39,7 +39,7 @@ index 0248808df911c8a63cbc5e3ae67e44760b0e1871..eaf3acb203ae58f4ef11585a44d4474b
  
      public Raid(BlockPos center, Difficulty difficulty) {
          this.active = true;
-@@ -279,6 +280,12 @@ public class Raid {
+@@ -279,31 +280,37 @@ public class Raid {
      }
  
      public void tick(ServerLevel level) {
@@ -52,7 +52,7 @@ index 0248808df911c8a63cbc5e3ae67e44760b0e1871..eaf3acb203ae58f4ef11585a44d4474b
          if (!this.isStopped()) {
              if (this.status == Raid.RaidStatus.ONGOING) {
                  boolean flag = this.active;
-@@ -609,7 +616,7 @@ public class Raid {
+@@ -609,32 +616,32 @@ public class Raid {
      }
  
      public void updateBossbar() {
@@ -62,10 +62,10 @@ index 0248808df911c8a63cbc5e3ae67e44760b0e1871..eaf3acb203ae58f4ef11585a44d4474b
  
      public float getHealthOfLivingRaiders() {
 diff --git a/net/minecraft/world/entity/raid/Raider.java b/net/minecraft/world/entity/raid/Raider.java
-index e9a0372f5a262d13b25875d8c507fba9b5751840..fd9e3f025c72d2fceeb8d3053177543a89f57aaa 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
-@@ -43,9 +43,25 @@ import org.jspecify.annotations.Nullable;
+@@ -43,34 +43,50 @@ import org.jspecify.annotations.Nullable;
  
  public abstract class Raider extends PatrollingMonster {
      protected static final EntityDataAccessor<Boolean> IS_CELEBRATING = SynchedEntityData.defineId(Raider.class, EntityDataSerializers.BOOLEAN);
@@ -94,7 +94,7 @@ index e9a0372f5a262d13b25875d8c507fba9b5751840..fd9e3f025c72d2fceeb8d3053177543a
      private static final int DEFAULT_WAVE = 0;
      private static final boolean DEFAULT_CAN_JOIN_RAID = false;
      protected @Nullable Raid raid;
-@@ -148,7 +164,7 @@ public abstract class Raider extends PatrollingMonster {
+@@ -148,32 +164,32 @@ public abstract class Raider extends PatrollingMonster {
      public boolean isCaptain() {
          ItemStack itemBySlot = this.getItemBySlot(EquipmentSlot.HEAD);
          boolean flag = !itemBySlot.isEmpty()
@@ -103,7 +103,7 @@ index e9a0372f5a262d13b25875d8c507fba9b5751840..fd9e3f025c72d2fceeb8d3053177543a
          boolean isPatrolLeader = this.isPatrolLeader();
          return flag && isPatrolLeader;
      }
-@@ -211,7 +227,7 @@ public abstract class Raider extends PatrollingMonster {
+@@ -211,32 +227,32 @@ public abstract class Raider extends PatrollingMonster {
          boolean flag = this.hasActiveRaid() && this.getCurrentRaid().getLeader(this.getWave()) != null;
          if (this.hasActiveRaid()
              && !flag
@@ -112,7 +112,7 @@ index e9a0372f5a262d13b25875d8c507fba9b5751840..fd9e3f025c72d2fceeb8d3053177543a
              // Paper start - EntityPickupItemEvent fixes
              if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0).isCancelled()) {
                  return;
-@@ -395,6 +411,16 @@ public abstract class Raider extends PatrollingMonster {
+@@ -395,31 +411,41 @@ public abstract class Raider extends PatrollingMonster {
                  && !this.cannotPickUpBanner();
          }
  
@@ -129,7 +129,7 @@ index e9a0372f5a262d13b25875d8c507fba9b5751840..fd9e3f025c72d2fceeb8d3053177543a
          private boolean cannotPickUpBanner() {
              if (!getServerLevel(this.mob).getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING, this.mob.level().purpurConfig.pillagerCanPickUpLoot)) return true; // Paper - respect game and entity rules for picking up items // Purpur - Check mobGriefing Overrides
              if (!this.mob.hasActiveRaid()) {
-@@ -404,7 +430,7 @@ public abstract class Raider extends PatrollingMonster {
+@@ -404,32 +430,32 @@ public abstract class Raider extends PatrollingMonster {
              } else if (!this.mob.canBeLeader()) {
                  return true;
              } else if (ItemStack.matches(

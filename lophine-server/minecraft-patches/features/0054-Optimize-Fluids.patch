@@ -4,10 +4,10 @@ Date: Sat, 13 Jun 2026 15:20:00 +0800
 Subject: [PATCH] Optimize Fluids
 
 diff --git a/net/minecraft/world/level/block/LiquidBlock.java b/net/minecraft/world/level/block/LiquidBlock.java
-index 77d1ecfd0f866f3fa5cd8fdf88eb4c147ba07d81..1f630c3cd0571bff4779a945eddeec022b5090db 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -199,6 +199,7 @@ public class LiquidBlock extends Block implements BucketPickup {
+@@ -199,21 +199,22 @@ public class LiquidBlock extends Block implements BucketPickup {
                      Block block = level.getFluidState(pos).isSource() ? Blocks.OBSIDIAN : Blocks.COBBLESTONE;
                      // CraftBukkit start
                      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(level, pos, block.defaultBlockState(), Block.UPDATE_ALL)) {
@@ -16,10 +16,10 @@ index 77d1ecfd0f866f3fa5cd8fdf88eb4c147ba07d81..1f630c3cd0571bff4779a945eddeec02
                      }
                      // CraftBukkit end
 diff --git a/net/minecraft/world/level/material/FlowingFluid.java b/net/minecraft/world/level/material/FlowingFluid.java
-index 9685d02a9837c773094a5da5cff6fa6fcfeed86a..afab54ffe92241f8d549ebe9745a0b47bd3bada0 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -200,6 +200,7 @@ public abstract class FlowingFluid extends Fluid {
+@@ -200,21 +200,22 @@ public abstract class FlowingFluid extends Fluid {
                  BlockPos blockPos = pos.relative(direction);
                  final BlockState blockStateIfLoaded = level.getBlockStateIfLoaded(blockPos); // Paper - Prevent chunk loading from fluid flowing
                  if (blockStateIfLoaded == null) continue; // Paper - Prevent chunk loading from fluid flowing
@@ -27,7 +27,7 @@ index 9685d02a9837c773094a5da5cff6fa6fcfeed86a..afab54ffe92241f8d549ebe9745a0b47
                  // CraftBukkit start
                  org.bukkit.block.Block source = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos);
                  org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(source, org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(direction));
-@@ -214,6 +215,39 @@ public abstract class FlowingFluid extends Fluid {
+@@ -214,21 +215,54 @@ public abstract class FlowingFluid extends Fluid {
          }
      }
  
@@ -67,7 +67,7 @@ index 9685d02a9837c773094a5da5cff6fa6fcfeed86a..afab54ffe92241f8d549ebe9745a0b47
      protected FluidState getNewLiquid(ServerLevel level, BlockPos pos, BlockState state) {
          int i = 0;
          int i1 = 0;
-@@ -343,33 +377,46 @@ public abstract class FlowingFluid extends Fluid {
+@@ -343,48 +377,61 @@ public abstract class FlowingFluid extends Fluid {
  
      protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);
  
@@ -131,10 +131,10 @@ index 9685d02a9837c773094a5da5cff6fa6fcfeed86a..afab54ffe92241f8d549ebe9745a0b47
          return canPassThroughWall(Direction.DOWN, level, pos, state, belowPos, belowState)
              && (belowState.getFluidState().getType().isSame(this) || canHoldFluid(level, belowPos, belowState, this.getFlowing()));
 diff --git a/net/minecraft/world/level/material/LavaFluid.java b/net/minecraft/world/level/material/LavaFluid.java
-index 3e81c98e2e6b0f1424429ab52aa43d229c867cc7..a6dc9cd0d163d6f3ffba8d975adbe581e1248f8b 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/world/level/material/LavaFluid.java
 +++ b/net/minecraft/world/level/material/LavaFluid.java
-@@ -237,6 +237,7 @@ public abstract class LavaFluid extends FlowingFluid {
+@@ -237,21 +237,22 @@ public abstract class LavaFluid extends FlowingFluid {
                      // CraftBukkit end
                  }
  

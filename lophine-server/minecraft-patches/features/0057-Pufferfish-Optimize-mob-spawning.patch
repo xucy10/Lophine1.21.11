@@ -11,10 +11,10 @@ Folia already has regionized mob spawning, so async threading is not needed.
 This version caches the spawn state to avoid redundant calculations.
 
 diff --git a/net/minecraft/server/level/ServerChunkCache.java b/net/minecraft/server/level/ServerChunkCache.java
-index 6714a60f8cea6ca9a51309243128b99f20dc0b81..3d15f39bca9cdb4477b35b90292e8dc508e878b0 100644
+index 0000000..0000000 100644
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -76,6 +76,9 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
+@@ -76,30 +76,33 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
      private final Set<ChunkHolder> chunkHoldersToBroadcast = new ReferenceOpenHashSet<>();
      @VisibleForDebug
      private NaturalSpawner.@Nullable SpawnState lastSpawnState;
@@ -24,7 +24,7 @@ index 6714a60f8cea6ca9a51309243128b99f20dc0b81..3d15f39bca9cdb4477b35b90292e8dc5
      // Paper start
      public final ca.spottedleaf.concurrentutil.map.ConcurrentLong2ReferenceChainedHashTable<net.minecraft.world.level.chunk.LevelChunk> fullChunks = new ca.spottedleaf.concurrentutil.map.ConcurrentLong2ReferenceChainedHashTable<>();
      public int getFullChunksCount() {
-@@ -532,27 +535,32 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
+@@ -532,65 +535,70 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
          int naturalSpawnChunkCount = this.distanceManager.getNaturalSpawnChunkCount();
          // Paper start - Optional per player mob spawns
          NaturalSpawner.SpawnState spawnState;
