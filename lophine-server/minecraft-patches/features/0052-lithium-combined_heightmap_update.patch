@@ -13,43 +13,33 @@ diff --git a/net/minecraft/world/level/chunk/LevelChunk.java b/net/minecraft/wor
 index 0000000..0000000 100644
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -393,55 +393,58 @@ public class LevelChunk extends ChunkAccess implements DebugValueSource, ca.spot
-             }
-             if (!state.isAir()) {
-                 int i = pos.getX() & 15;
-                 int i2 = pos.getZ() & 15;
-                 int y = pos.getY();
-                 SectionPos sectionPos = SectionPos.of(pos);
-                 LevelChunkSection section = this.getSection(sectionPos.section());
-                 if (section == null) {
-                     return null;
-                 } else {
-                     Block block = state.getBlock();
--                    this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING).update(i, y, i2, state);
--                    this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES).update(i, y, i2, state);
--                    this.heightmaps.get(Heightmap.Types.OCEAN_FLOOR).update(i, y, i2, state);
--                    this.heightmaps.get(Heightmap.Types.WORLD_SURFACE).update(i, y, i2, state);
-+                    // Mili start - lithium: combined_heightmap_update
-+                    Heightmap heightmap0 = this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING);
-+                    Heightmap heightmap1 = this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES);
-+                    Heightmap heightmap2 = this.heightmaps.get(Heightmap.Types.OCEAN_FLOOR);
-+                    Heightmap heightmap3 = this.heightmaps.get(Heightmap.Types.WORLD_SURFACE);
-+                    org.leavesmc.leaves.lithium.common.world.chunk.heightmap.CombinedHeightmapUpdate.updateHeightmaps(heightmap0, heightmap1, heightmap2, heightmap3, this, i, y, i2, state);
-+                    // Mili end - lithium: combined_heightmap_update
-                     boolean hasOnlyAir1 = section.hasOnlyAir();
-                     if (hasOnlyAir != hasOnlyAir1) {
-                         this.level.getChunkSource().getLightEngine().updateSectionStatus(pos, hasOnlyAir1);
-                     }
-                 }
-             }
+@@ -380,20 +380,23 @@ public class LevelChunk extends ChunkAccess implements DebugValueSource, ca.spot
+                 return null;
+             } else {
+                 Block block = state.getBlock();
+-                this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING).update(i, y, i2, state);
+-                this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES).update(i, y, i2, state);
+-                this.heightmaps.get(Heightmap.Types.OCEAN_FLOOR).update(i, y, i2, state);
+-                this.heightmaps.get(Heightmap.Types.WORLD_SURFACE).update(i, y, i2, state);
++                // Mili start - lithium: combined_heightmap_update
++                Heightmap heightmap0 = this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING);
++                Heightmap heightmap1 = this.heightmaps.get(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES);
++                Heightmap heightmap2 = this.heightmaps.get(Heightmap.Types.OCEAN_FLOOR);
++                Heightmap heightmap3 = this.heightmaps.get(Heightmap.Types.WORLD_SURFACE);
++                org.leavesmc.leaves.lithium.common.world.chunk.heightmap.CombinedHeightmapUpdate.updateHeightmaps(
++                    heightmap0, heightmap1, heightmap2, heightmap3, this, i, y, i2, state);
++                // Mili end - lithium: combined_heightmap_update
+                 boolean hasOnlyAir1 = section.hasOnlyAir();
+                 if (hasOnlyAir != hasOnlyAir1) {
+                     this.level.getChunkSource().getLightEngine().updateSectionStatus(pos, hasOnlyAir1);
 diff --git a/net/minecraft/world/level/levelgen/Heightmap.java b/net/minecraft/world/level/levelgen/Heightmap.java
 index 0000000..0000000 100644
 --- a/net/minecraft/world/level/levelgen/Heightmap.java
 +++ b/net/minecraft/world/level/levelgen/Heightmap.java
-@@ -123,21 +123,27 @@ public class Heightmap {
+@@ -123,6 +123,12 @@ public class Heightmap {
          this.data.set(getIndex(x, z), value - this.chunk.getMinY());
      }
- 
+
 +    // Mili start - lithium: combined_heightmap_update
 +    public final Predicate<BlockState> isOpaque() {
 +        return this.isOpaque;
