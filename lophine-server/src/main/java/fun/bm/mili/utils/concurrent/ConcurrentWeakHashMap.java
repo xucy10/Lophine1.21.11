@@ -26,8 +26,8 @@ public final class ConcurrentWeakHashMap<K, V> {
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (!(obj instanceof WeakKey<?> other)) return false;
-            K thisRef = this.get();
-            K otherRef = other.get();
+            Object thisRef = this.get();
+            Object otherRef = other.get();
             if (thisRef == null || otherRef == null) {
                 return thisRef == null && otherRef == null && this.hash == other.hash;
             }
