@@ -129,7 +129,7 @@ public final class MiliChunkPreloader {
         final int radius = calculateRadius(state);
 
         // 触发预加载 / Trigger preload
-        final ServerLevel level = player.serverLevel();
+        final ServerLevel level = (ServerLevel) player.level();
         if (level == null) return;
 
         final ca.spottedleaf.concurrentutil.util.Priority priority =
@@ -141,7 +141,7 @@ public final class MiliChunkPreloader {
 
         if (ChunkPreloadConfig.debug) {
             LOGGER.debug("[ChunkPreload] {} mode={} speed={} pred=({},{}), r={}, chunks~{}",
-                    player.getGameProfile().getName(), state.mode, String.format("%.2f", state.speed),
+                    player.getGameProfile().name(), state.mode, String.format("%.2f", state.speed),
                     predChunkX, predChunkZ, radius, (2 * radius + 1) * (2 * radius + 1));
         }
     }
